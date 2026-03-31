@@ -13,14 +13,19 @@ function renderConfigs() {
     const apiTypeLabel = provider.apiType === 'anthropic' ? 'Anthropic' : 'OpenAI'
     const apiKeyDisplay = getApiKeyDisplay(provider, providerIndex)
     const apiKeyEye = visibleApiKeyProviders.has(providerIndex) ? '🙈' : '👁️'
+    const website = String(provider.website || '').trim()
+    const websiteText = website || '-'
+    const websiteHtml = website
+      ? `<button class="provider-website-link selectable-item" onclick="openProviderWebsite(${providerIndex}, event)" title="点击打开官网">${escapeHtml(websiteText)}</button>`
+      : `<span class="meta-value selectable-item">-</span>`
 
     const modelHtml = provider.models.map((model, modelIndex) => {
       const key = getModelKey(providerIndex, modelIndex)
       const statusState = getModelStatusState(model)
-      const contextWindowText = model.contextWindow || '自动'
-      const maxTokensText = model.maxTokens || '自动'
-      const reasoningText = model.reasoningMode === true ? '启用' : model.reasoningMode === false ? '禁用' : '自动'
-      const inputTypesText = Array.isArray(model.inputTypes) && model.inputTypes.length > 0 ? model.inputTypes.join(', ') : '自动'
+      const contextWindowText = model.contextWindow || '-'
+      const maxTokensText = model.maxTokens || '-'
+      const reasoningText = model.reasoningMode === true ? '启用' : model.reasoningMode === false ? '禁用' : '-'
+      const inputTypesText = Array.isArray(model.inputTypes) && model.inputTypes.length > 0 ? model.inputTypes.join(', ') : '-'
 
       return `
         <div class="model-item" data-provider-index="${providerIndex}" data-model-index="${modelIndex}" ondragover="handleModelDragOver(${providerIndex}, event)" ondrop="handleModelDrop(${providerIndex}, ${modelIndex}, event)">
@@ -59,12 +64,15 @@ function renderConfigs() {
               <input class="row-checkbox provider-checkbox" data-provider-index="${providerIndex}" type="checkbox" ${providerSelection.checked ? 'checked' : ''} onchange="toggleProviderSelect(${providerIndex}, this.checked)">
             </label>
             <h2 class="provider-name">${escapeHtml(provider.name)}</h2>
-            <div class="provider-actions" style="margin-left: auto;">
-              <button class="button button-secondary" onclick="openProviderModal(${providerIndex})">编辑供应商</button>
+            <div class="provider-actions">
               <button class="button" onclick="openModelModal(${providerIndex})">+ 添加模型</button>
-              <button class="button button-danger" onclick="deleteProvider(${providerIndex})">删除供应商</button>
+              <button class="button button-secondary" onclick="openProviderModal(${providerIndex})">编辑</button>
+              <button class="button button-danger provider-delete-button" onclick="deleteProvider(${providerIndex})">删除</button>
               <span class="drag-handle" draggable="true" ondragstart="handleProviderDragStart(${providerIndex}, event)" title="拖拽供应商排序">⠿</span>
             </div>
+          </div>
+          <div class="provider-row" title="${escapeHtml(websiteText)}">
+            <span class="meta-label selectable-item">官网:</span> ${websiteHtml}
           </div>
           <div class="provider-row">
             <span class="meta-label selectable-item">接口:</span> <span class="meta-value selectable-item">${apiTypeLabel}</span>
@@ -73,7 +81,7 @@ function renderConfigs() {
             <span class="meta-label selectable-item">地址:</span> <span class="meta-value selectable-item">${escapeHtml(joinUrl(provider.url, provider.endpoint))}</span>
           </div>
           <div class="provider-row">
-            <span class="meta-label selectable-item">API Key:</span><span class="meta-value selectable-item">${escapeHtml(apiKeyDisplay)}</span><button class="api-key-eye" onclick="toggleApiKeyVisibility(${providerIndex}, event)" title="显示或隐藏 API Key">${apiKeyEye}</button>
+            <span class="meta-label selectable-item">密钥:</span> <span class="meta-value selectable-item">${escapeHtml(apiKeyDisplay)}</span><button class="api-key-eye" onclick="toggleApiKeyVisibility(${providerIndex}, event)" title="显示或隐藏 API Key">${apiKeyEye}</button>
           </div>
           <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
             ${modelHtml || '<div class="empty-state" style="padding: 10px;">该供应商下暂无模型</div>'}

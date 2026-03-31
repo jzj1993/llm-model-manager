@@ -2,6 +2,7 @@ function updateSelectionControls() {
   const allCheckbox = document.getElementById('selectAllConfigs')
   const selectedCountEl = document.getElementById('selectedCount')
   const exportBtn = document.getElementById('exportSelectedButton')
+  const checkBtn = document.getElementById('checkSelectedButton')
   const totalCount = providers.reduce((sum, provider) => sum + provider.models.length, 0)
   const selectedCount = selectedModelKeys.size
   const allSelected = totalCount > 0 && selectedCount === totalCount
@@ -15,7 +16,11 @@ function updateSelectionControls() {
     selectedCountEl.textContent = `已选 ${selectedCount} 项`
   }
   if (exportBtn) {
-    exportBtn.disabled = selectedCount === 0
+    exportBtn.disabled = selectedCount === 0 || isCheckingSelectedModels
+  }
+  if (checkBtn) {
+    checkBtn.disabled = selectedCount === 0 || isCheckingSelectedModels
+    checkBtn.textContent = isCheckingSelectedModels ? '检查中...' : '检查选中模型'
   }
 }
 
@@ -200,4 +205,35 @@ function renderModelStatusHtml(model) {
     ? `<span class="status-info" title="查看详情">i<span class="status-tooltip">${escapeHtml(state.detail)}</span></span>`
     : ''
   return `<span class="status-text">${state.statusText}</span>${detailHtml}`
+}
+
+async function checkSelectedItems() {
+  if (isCheckingSelectedModels) return
+  if (selectedModelKeys.size === 0) {
+    alert('请先选择至少一个模型')
+    return
+  }
+
+  isCheckingSelectedModels = true
+  updateSelectionControls()
+
+  try {
+    const targets = Array.from(selectedModelKeys)
+      .map((key) => {
+        const [providerIndexText, modelIndexText] = key.split(':')
+        return {
+          providerIndex: Number.parseInt(providerIndexText, 10),
+          modelIndex: Number.parseInt(modelIndexText, 10)
+        }
+      })
+      .filter((item) => Number.isFinite(item.providerIndex) && Number.isFinite(item.modelIndex))
+
+    await Promise.all(
+      targets.map((item) => checkModel(item.providerIndex, item.modelIndex))
+    )
+  } finally {
+    isCheckingSelectedModels = false
+    updateSelectionControls()
+    renderConfigs()
+  }
 }

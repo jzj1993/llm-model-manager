@@ -1,6 +1,6 @@
-class CCSwitchExporter extends window.BaseExporter {
+class CCSwitchCLIExporter extends window.BaseExporter {
   constructor() {
-    super('cc-switch-cli', 'CC Switch（命令行）', 'bash')
+    super('cc-switch-cli', 'CC Switch - 命令行')
   }
 
   normalizeUrl(url) {
@@ -24,8 +24,12 @@ class CCSwitchExporter extends window.BaseExporter {
   }
 
   export(configs) {
-    return configs.map(config => this.buildCommand(config)).join('\n')
+    return configs.map((config, index) => ({
+      title: `#${index + 1} ${config.providerName} / ${config.modelName}`,
+      type: 'command',
+      content: this.buildCommand(config)
+    }))
   }
 }
 
-window.ExporterRegistry.registerExporter(new CCSwitchExporter())
+window.ExporterRegistry.registerExporter(new CCSwitchCLIExporter())

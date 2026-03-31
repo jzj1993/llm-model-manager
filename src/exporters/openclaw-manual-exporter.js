@@ -1,0 +1,147 @@
+class OpenClawManualExporter extends window.BaseExporter {
+  constructor() {
+    super('openclaw-manual', 'OpenClaw - 手动（推荐）')
+  }
+
+  normalizeUrl(url) {
+    return String(url || '').replace(/\/+$/, '')
+  }
+
+  normalizeEndpoint(endpoint) {
+    const value = String(endpoint || '')
+    if (!value) return ''
+    return value.startsWith('/') ? value : `/${value}`
+  }
+
+  joinUrl(url, endpoint) {
+    return `${this.normalizeUrl(url)}${this.normalizeEndpoint(endpoint)}`
+  }
+
+  toProviderKey(name, apiType) {
+    const normalizedName = (name || 'provider')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+    return `${normalizedName || 'provider'}-${apiType || 'openai'}`
+  }
+
+  resolveModelOptions(config) {
+    return {
+      contextWindow: Number.isFinite(config.contextWindow) ? config.contextWindow : null,
+      maxTokens: Number.isFinite(config.maxTokens) ? config.maxTokens : null,
+      reasoning: typeof config.reasoningMode === 'boolean' ? config.reasoningMode : null,
+      input: Array.isArray(config.inputTypes) && config.inputTypes.length > 0 ? config.inputTypes : null
+    }
+  }
+
+  buildProviders(configs) {
+    const providers = {}
+    configs.forEach(config => {
+      const providerName = config.providerName || config.name
+      const providerKey = this.toProviderKey(providerName, config.apiType)
+      const apiName = config.apiType === 'anthropic' ? 'anthropic-messages' : 'openai-completions'
+      if (!providers[providerKey]) {
+        providers[providerKey] = {
+          baseUrl: this.joinUrl(config.url, config.endpoint),
+          api: apiName,
+          apiKey: config.apiKey || 'sk-xxx',
+          models: []
+        }
+      }
+
+      const modelOptions = this.resolveModelOptions(config)
+      const model = {
+        id: config.modelName,
+        name: config.name || config.modelName
+      }
+      if (modelOptions.contextWindow != null) model.contextWindow = modelOptions.contextWindow
+      if (modelOptions.maxTokens != null) model.maxTokens = modelOptions.maxTokens
+      if (modelOptions.reasoning != null) model.reasoning = modelOptions.reasoning
+      if (modelOptions.input != null) model.input = modelOptions.input
+      providers[providerKey].models.push(model)
+    })
+    return providers
+  }
+
+  buildAuthProfiles(providers) {
+    const profiles = {}
+    Object.keys(providers).forEach(providerKey => {
+      profiles[`${providerKey}-profile`] = {
+        type: 'api_key',
+        provider: providerKey,
+        key: providers[providerKey].apiKey || 'sk-xxx'
+      }
+    })
+    return {
+      profiles
+    }
+  }
+
+  buildOpenclawConfig(providers) {
+    const providerKeys = Object.keys(providers)
+    const modelRefs = {}
+    providerKeys.forEach(providerKey => {
+      const models = providers[providerKey]?.models || []
+      models.forEach(model => {
+        modelRefs[`${providerKey}/${model.id}`] = {}
+      })
+    })
+
+    const modelKeys = Object.keys(modelRefs)
+    return {
+      auth: {
+        profiles: providerKeys.reduce((acc, providerKey) => {
+          acc[`${providerKey}-profile`] = {
+            provider: providerKey,
+            mode: 'api_key'
+          }
+          return acc
+        }, {})
+      },
+      agents: {
+        defaults: {
+          model: {
+            primary: modelKeys[0] || '',
+            fallbacks: modelKeys.slice(1)
+          },
+          models: modelRefs
+        }
+      }
+    }
+  }
+
+  export(configs) {
+    const providers = this.buildProviders(configs)
+    const authProfiles = this.buildAuthProfiles(providers)
+    const openclawConfig = this.buildOpenclawConfig(providers)
+
+    const content = [
+      '依次修改以下三个文件，保存后运行 `openclaw gateway restart` 重启 OpenClaw 即可生效。',
+      '',
+      '**其中 profile 和 provider 的名字可以修改，但需要保持一致。**',
+      '## `~/.openclaw/agents/main/agent/auth-profiles.json`',
+      '```json',
+      JSON.stringify(authProfiles, null, 2),
+      '```',
+      '',
+      '## `~/.openclaw/agents/main/agent/models.json`',
+      '```json',
+      JSON.stringify({ providers }, null, 2),
+      '```',
+      '',
+      '## `~/.openclaw/openclaw.json`',
+      '```json',
+      JSON.stringify(openclawConfig, null, 2),
+      '```'
+    ].join('\n')
+    return [
+      {
+        title: `#1 ${configs[0]?.providerName || 'Provider'} / ${configs[0]?.modelName || 'Model'} (+${Math.max(0, configs.length - 1)} 项)`,
+        type: 'markdown',
+        content
+      }
+    ]
+  }
+}
+
+window.ExporterRegistry.registerExporter(new OpenClawManualExporter())

@@ -1,7 +1,51 @@
+function renderProviderPresetOptions() {
+  const presetSelect = document.getElementById('providerPreset')
+  if (!presetSelect) return
+
+  const defaultOption = '<option value="">不使用预设</option>'
+  const presetOptions = PROVIDER_PRESETS.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`)
+  presetSelect.innerHTML = [defaultOption, ...presetOptions].join('')
+}
+
+function findMatchedPreset(provider) {
+  if (!provider) return null
+  const normalizedUrl = normalizeUrl(String(provider.url || '').trim())
+  const normalizedEndpoint = normalizeEndpoint(String(provider.endpoint || '').trim())
+  const normalizedName = String(provider.name || '').trim().toLowerCase()
+
+  return PROVIDER_PRESETS.find((preset) => {
+    const sameName = preset.name.toLowerCase() === normalizedName
+    const sameUrl = normalizeUrl(String(preset.url || '')) === normalizedUrl
+    const sameEndpoint = normalizeEndpoint(String(preset.endpoint || '')) === normalizedEndpoint
+    return sameName || (sameUrl && sameEndpoint)
+  }) || null
+}
+
+function applyProviderPreset() {
+  const presetSelect = document.getElementById('providerPreset')
+  if (!presetSelect) return
+  const preset = getProviderPresetById(presetSelect.value)
+  if (!preset) return
+
+  const providerNameInput = document.getElementById('providerName')
+  const apiTypeSelect = document.getElementById('apiType')
+  const urlInput = document.getElementById('url')
+  const endpointInput = document.getElementById('endpoint')
+  const providerWebsiteInput = document.getElementById('providerWebsite')
+
+  providerNameInput.value = preset.name
+  apiTypeSelect.value = preset.apiType
+  urlInput.value = preset.url
+  endpointInput.value = preset.endpoint
+  providerWebsiteInput.value = preset.website || preset.url || ''
+}
+
 function openProviderModal(index = -1) {
   editingProviderIndex = index
   const modal = document.getElementById('providerModal')
   const modalTitle = document.getElementById('providerModalTitle')
+  const presetSelect = document.getElementById('providerPreset')
+  renderProviderPresetOptions()
   renderInputHistories()
 
   if (index >= 0) {
@@ -11,13 +55,22 @@ function openProviderModal(index = -1) {
     document.getElementById('apiType').value = provider.apiType
     document.getElementById('url').value = provider.url
     document.getElementById('endpoint').value = provider.endpoint
+    document.getElementById('providerWebsite').value = provider.website || ''
     document.getElementById('apiKey').value = provider.apiKey || ''
+    const matchedPreset = findMatchedPreset(provider)
+    if (presetSelect) {
+      presetSelect.value = matchedPreset ? matchedPreset.id : ''
+    }
   } else {
     modalTitle.textContent = '添加供应商'
+    if (presetSelect) {
+      presetSelect.value = ''
+    }
     document.getElementById('providerName').value = ''
     document.getElementById('apiType').value = 'openai'
     document.getElementById('url').value = ''
     updateDefaults()
+    document.getElementById('providerWebsite').value = ''
     document.getElementById('apiKey').value = ''
   }
 
@@ -36,6 +89,7 @@ function saveProvider() {
   const rawUrl = normalizeUrl(document.getElementById('url').value.trim())
   const rawEndpoint = normalizeEndpoint(document.getElementById('endpoint').value.trim())
   const apiKey = document.getElementById('apiKey').value.trim()
+  const website = document.getElementById('providerWebsite').value.trim()
   const normalizedOpenAI = normalizeOpenAIUrlAndEndpoint(apiType, rawUrl, rawEndpoint)
   const url = normalizedOpenAI.url
   const endpoint = normalizedOpenAI.endpoint
@@ -50,6 +104,7 @@ function saveProvider() {
     apiType,
     url,
     endpoint,
+    website,
     apiKey,
     models: editingProviderIndex >= 0 ? providers[editingProviderIndex].models : []
   }
@@ -67,6 +122,20 @@ function saveProvider() {
   closeProviderModal()
 }
 
+async function openProviderWebsite(providerIndex, event) {
+  if (event) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+  const raw = String(providers[providerIndex]?.website || '').trim()
+  if (!raw) return
+  const target = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`
+  const ok = await window.electronAPI.openExternal(target)
+  if (!ok) {
+    alert('官网链接打开失败，请检查 URL 是否正确')
+  }
+}
+
 function deleteProvider(providerIndex) {
   if (!confirm('确定要删除这个供应商及其所有模型吗？')) return
   providers.splice(providerIndex, 1)
@@ -81,7 +150,17 @@ function openModelModal(providerIndex, modelIndex = -1) {
   editingModelIndex = modelIndex
   const modal = document.getElementById('modelModal')
   const titleEl = document.getElementById('modelModalTitle')
+  const probeResultEl = document.getElementById('modelProbeResult')
+  const probeButtonEl = document.getElementById('probeModelButton')
   renderInputHistories()
+  if (probeResultEl) {
+    probeResultEl.textContent = '可自动探测 Context Window / Max Tokens'
+    probeResultEl.style.color = '#999'
+  }
+  if (probeButtonEl) {
+    probeButtonEl.disabled = false
+    probeButtonEl.textContent = '探测模型参数'
+  }
 
   if (modelIndex >= 0) {
     titleEl.textContent = '编辑模型'
@@ -101,6 +180,7 @@ function openModelModal(providerIndex, modelIndex = -1) {
     document.getElementById('reasoningMode').value = ''
     document.getElementById('inputTypes').value = ''
   }
+  updateReasoningModeStyle()
   modal.classList.add('active')
 }
 
@@ -155,6 +235,93 @@ function saveModel() {
   saveConfigs()
   renderConfigs()
   closeModelModal()
+}
+
+function clearModelCapabilityFields() {
+  document.getElementById('contextWindow').value = ''
+  document.getElementById('maxTokens').value = ''
+  document.getElementById('reasoningMode').value = ''
+  document.getElementById('inputTypes').value = ''
+  updateReasoningModeStyle()
+}
+
+function updateReasoningModeStyle() {
+  const select = document.getElementById('reasoningMode')
+  if (!select) return
+  const isUndefined = select.value === ''
+  select.classList.toggle('is-undefined', isUndefined)
+}
+
+async function probeModelCapabilities() {
+  if (editingModelProviderIndex < 0 || !providers[editingModelProviderIndex]) {
+    alert('请先选择有效的供应商')
+    return
+  }
+
+  const modelName = document.getElementById('modelName').value.trim()
+  if (!modelName) {
+    alert('请先填写模型 ID，再执行探测')
+    return
+  }
+
+  const provider = providers[editingModelProviderIndex]
+  const probeButtonEl = document.getElementById('probeModelButton')
+  const probeResultEl = document.getElementById('modelProbeResult')
+
+  if (probeButtonEl) {
+    probeButtonEl.disabled = true
+    probeButtonEl.textContent = '探测中...'
+  }
+  if (probeResultEl) {
+    probeResultEl.textContent = '正在请求模型元数据，请稍候...'
+    probeResultEl.style.color = '#999'
+  }
+
+  try {
+    const result = await window.electronAPI.detectModelCapabilities({
+      apiType: provider.apiType,
+      url: provider.url,
+      endpoint: provider.endpoint,
+      apiKey: provider.apiKey,
+      modelName
+    })
+
+    const capabilities = result?.capabilities || null
+    if (!result?.success) {
+      clearModelCapabilityFields()
+    }
+
+    if (capabilities?.contextWindow) {
+      document.getElementById('contextWindow').value = String(capabilities.contextWindow)
+    }
+    if (capabilities?.maxTokens) {
+      document.getElementById('maxTokens').value = String(capabilities.maxTokens)
+    }
+    if (capabilities?.reasoningMode === true) {
+      document.getElementById('reasoningMode').value = 'true'
+    } else if (capabilities?.reasoningMode === false) {
+      document.getElementById('reasoningMode').value = 'false'
+    }
+    if (Array.isArray(capabilities?.inputTypes) && capabilities.inputTypes.length > 0) {
+      document.getElementById('inputTypes').value = capabilities.inputTypes.join(',')
+    }
+
+    if (probeResultEl) {
+      probeResultEl.textContent = result?.message || '探测完成'
+      probeResultEl.style.color = result?.success ? '#0f766e' : '#b45309'
+    }
+  } catch (error) {
+    clearModelCapabilityFields()
+    if (probeResultEl) {
+      probeResultEl.textContent = `探测失败: ${error.message}`
+      probeResultEl.style.color = '#b91c1c'
+    }
+  } finally {
+    if (probeButtonEl) {
+      probeButtonEl.disabled = false
+      probeButtonEl.textContent = '探测模型参数'
+    }
+  }
 }
 
 function deleteModel(providerIndex, modelIndex) {

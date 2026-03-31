@@ -93,6 +93,10 @@ input:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+#reasoningMode.is-undefined {
+  color: #94a3b8;
+}
+
 .button {
   padding: 7px 12px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -107,7 +111,7 @@ input:focus, select:focus {
 
 .button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 10px rgba(177, 177, 177, 0.2);
 }
 
 .button:active {
@@ -128,6 +132,17 @@ input:focus, select:focus {
   background: #dc3545;
 }
 
+.provider-delete-button {
+  background: #f18484;
+  color: #ffffff;
+}
+
+.provider-delete-button:hover {
+  box-shadow: 0 8px 20px rgba(248, 113, 113, 0.22);
+  background: #f87171;
+  color: #ffffff;
+}
+
 .button-success {
   background: #28a745;
 }
@@ -139,21 +154,15 @@ input:focus, select:focus {
 }
 
 .provider-item {
-  background: #f8f9fa;
+  background: #f8f8f8;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   padding: 8px 10px;
-  transition: all 0.3s ease;
-  cursor: default;
-}
-
-.provider-item:hover {
-  border-color: #e0e0e0;
-  box-shadow: none;
 }
 
 .model-item {
-  background: #f8f9fa;
+  margin-left: 45px;
+  background: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   padding: 8px 10px;
@@ -237,13 +246,24 @@ input:focus, select:focus {
   align-items: center;
   min-height: 40px;
   margin: 0;
+  width: 260px;
+  flex: 0 0 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .provider-actions {
   display: flex;
   gap: 6px;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+  min-width: 0;
   align-items: center;
+  justify-content: flex-end;
+}
+
+.provider-actions .drag-handle {
+  margin-left: 0;
 }
 
 .model-actions {
@@ -370,6 +390,20 @@ input:focus, select:focus {
   background: #f1f5f9;
 }
 
+.provider-website-link {
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: 12px;
+}
+
+.provider-website-link:hover {
+  color: #1d4ed8;
+}
+
 .model-status {
   padding: 6px 10px;
   border-radius: 6px;
@@ -479,6 +513,21 @@ input:focus, select:focus {
   margin-top: 4px;
 }
 
+.model-advanced-section {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f8fafc;
+  padding: 14px;
+  margin-top: 4px;
+}
+
+.model-advanced-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 12px;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -571,25 +620,90 @@ input:focus, select:focus {
   flex-direction: column;
 }
 
-.code-type {
+.export-entries {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.export-entry-item {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 10px;
+}
+
+.export-entry-title {
   font-size: 12px;
-  color: #6b7280;
-  margin-bottom: 6px;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.export-entry-code {
+  margin: 0;
+  max-height: 220px;
+  overflow: auto;
+  background: #f8fafc;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  white-space: pre;
+}
+
+.export-entry-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 .code-viewer {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  background: #0f172a;
-  color: #e2e8f0;
+  background: #f8fafc;
+  color: #0f172a;
   border-radius: 10px;
-  border: 1px solid #1e293b;
+  border: 1px solid #d1d5db;
   padding: 14px;
   font-size: 12px;
   line-height: 1.5;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
   white-space: pre;
+}
+
+.markdown-view {
+  white-space: normal;
+  line-height: 1.6;
+}
+
+.markdown-view h1,
+.markdown-view h2,
+.markdown-view h3 {
+  margin: 10px 0 8px;
+  color: #111827;
+}
+
+.markdown-view p,
+.markdown-view li {
+  color: #1f2937;
+}
+
+.markdown-view pre {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px;
+  overflow: auto;
+}
+
+.markdown-view code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 }
 
 .modal-header {
@@ -625,4 +739,15 @@ input:focus, select:focus {
   justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
+}
+
+.export-modal-footer {
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.export-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }

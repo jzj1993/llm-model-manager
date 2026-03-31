@@ -1,6 +1,6 @@
 class CCSwitchDeepLinkExporter extends window.BaseExporter {
   constructor() {
-    super('cc-switch-deeplink', 'CC Switch（Deep Link）', 'plaintext')
+    super('cc-switch-deeplink', 'CC Switch - Deep Link')
   }
 
   normalizeUrl(url) {
@@ -38,9 +38,12 @@ class CCSwitchDeepLinkExporter extends window.BaseExporter {
     const base64 = this.toBase64(JSON.stringify(payload))
     const deepLink = `ccswitch://provider/import?config=${encodeURIComponent(base64)}`
     return [
-      '# Deep Link（实验格式，需根据 CC Switch 实际协议验证）',
-      deepLink
-    ].join('\n')
+      {
+        title: `#1 ${configs[0]?.providerName || 'Provider'} / ${configs[0]?.modelName || 'Model'} (+${Math.max(0, configs.length - 1)} 项)`,
+        type: 'deeplink',
+        content: deepLink
+      }
+    ]
   }
 }
 
