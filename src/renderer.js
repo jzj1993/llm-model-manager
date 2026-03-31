@@ -125,6 +125,28 @@ function parseInputTypes(value) {
   return Array.from(new Set(items))
 }
 
+function normalizeOpenAIUrlAndEndpoint(apiType, url, endpoint) {
+  if (apiType !== 'openai') {
+    return { url, endpoint }
+  }
+
+  let normalizedUrl = normalizeUrl(url)
+  let normalizedEndpoint = normalizeEndpoint(endpoint)
+
+  if (normalizedEndpoint.startsWith('/v1/')) {
+    if (!normalizedUrl.endsWith('/v1')) {
+      normalizedUrl = `${normalizedUrl}/v1`
+    }
+    normalizedEndpoint = normalizedEndpoint.replace(/^\/v1/, '')
+    normalizedEndpoint = normalizeEndpoint(normalizedEndpoint)
+  }
+
+  return {
+    url: normalizedUrl,
+    endpoint: normalizedEndpoint
+  }
+}
+
 function initExportOptions() {
   const exportModeSelect = document.getElementById('exportMode')
   if (!exportModeSelect || !window.ExporterRegistry) return
@@ -286,14 +308,26 @@ function updateDefaults() {
   const endpointInput = document.getElementById('endpoint')
   const modelNameInput = document.getElementById('modelName')
 
+  const applyDefault = (input, placeholder, defaultValue, defaultValues) => {
+    input.placeholder = placeholder
+    const currentValue = input.value.trim()
+    if (defaultValues.includes(currentValue)) {
+      input.value = defaultValue
+    }
+  }
+
+  const urlDefaults = ['https://api.anthropic.com', 'https://api.openai.com/v1', '']
+  const endpointDefaults = ['/v1/messages', '/chat/completions', '']
+  const modelDefaults = ['claude-opus-4-6', 'gpt-5.4', '']
+
   if (apiType === 'anthropic') {
-    urlInput.placeholder = 'https://api.anthropic.com'
-    endpointInput.value = '/v1/messages'
-    modelNameInput.placeholder = 'claude-opus-4-6'
+    applyDefault(urlInput, 'https://api.anthropic.com', 'https://api.anthropic.com', urlDefaults)
+    applyDefault(endpointInput, '/v1/messages', '/v1/messages', endpointDefaults)
+    applyDefault(modelNameInput, 'claude-opus-4-6', 'claude-opus-4-6', modelDefaults)
   } else {
-    urlInput.placeholder = 'https://api.openai.com'
-    endpointInput.value = '/v1/chat/completions'
-    modelNameInput.placeholder = 'gpt-5.4'
+    applyDefault(urlInput, 'https://api.openai.com/v1', 'https://api.openai.com/v1', urlDefaults)
+    applyDefault(endpointInput, '/chat/completions', '/chat/completions', endpointDefaults)
+    applyDefault(modelNameInput, 'gpt-5.4', 'gpt-5.4', modelDefaults)
   }
 }
 
@@ -342,8 +376,8 @@ function closeModal() {
 function saveConfig() {
   const name = document.getElementById('configName').value.trim()
   const apiType = document.getElementById('apiType').value
-  const url = normalizeUrl(document.getElementById('url').value.trim())
-  const endpoint = normalizeEndpoint(document.getElementById('endpoint').value.trim())
+  const rawUrl = normalizeUrl(document.getElementById('url').value.trim())
+  const rawEndpoint = normalizeEndpoint(document.getElementById('endpoint').value.trim())
   const modelName = document.getElementById('modelName').value.trim()
   const apiKey = document.getElementById('apiKey').value.trim()
   const contextWindow = parseOptionalInteger(document.getElementById('contextWindow').value)
@@ -351,6 +385,9 @@ function saveConfig() {
   const reasoningRaw = document.getElementById('reasoningMode').value
   const inputTypes = parseInputTypes(document.getElementById('inputTypes').value)
   const reasoningMode = reasoningRaw === '' ? null : reasoningRaw === 'true'
+  const normalizedOpenAI = normalizeOpenAIUrlAndEndpoint(apiType, rawUrl, rawEndpoint)
+  const url = normalizedOpenAI.url
+  const endpoint = normalizedOpenAI.endpoint
 
   if (!name || !url || !endpoint || !modelName) {
     alert('请填写所有必填字段')
