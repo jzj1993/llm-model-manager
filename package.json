@@ -1,0 +1,22 @@
+{
+  "name": "model-checker",
+  "version": "1.0.0",
+  "description": "Electron tool to check if a model is available",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "electron",
+    "model-checker"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@harnessgg/electron": "^0.1.0",
+    "electron": "^28.0.0"
+  },
+  "dependencies": {
+    "highlight.js": "^11.11.1"
+  }
+}
