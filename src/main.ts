@@ -1,7 +1,8 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import path from 'node:path'
 import os from 'node:os'
-import fs from 'node:fs/promises'
+import fs from 'node:fs'
+import fsPromises from 'node:fs/promises'
 import crypto from 'node:crypto'
 import { execFile } from 'node:child_process'
 
@@ -16,11 +17,13 @@ if (!gotSingleInstanceLock) {
 }
 
 function createWindow() {
+  const devIconPath = path.join(__dirname, '..', 'build', 'icon.png')
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 820,
     minWidth: 960,
     minHeight: 680,
+    ...(fs.existsSync(devIconPath) ? { icon: devIconPath } : {}),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -43,7 +46,7 @@ function getConfigFilePath() {
 ipcMain.handle('load-configs', async () => {
   try {
     const configPath = getConfigFilePath()
-    const content = await fs.readFile(configPath, 'utf-8')
+    const content = await fsPromises.readFile(configPath, 'utf-8')
     const parsed = JSON.parse(content)
     return Array.isArray(parsed) ? parsed : []
   } catch (error) {
@@ -56,8 +59,8 @@ ipcMain.handle('save-configs', async (event, configs) => {
   try {
     const configPath = getConfigFilePath()
     const payload = JSON.stringify(Array.isArray(configs) ? configs : [], null, 2)
-    await fs.mkdir(path.dirname(configPath), { recursive: true })
-    await fs.writeFile(configPath, payload, 'utf-8')
+    await fsPromises.mkdir(path.dirname(configPath), { recursive: true })
+    await fsPromises.writeFile(configPath, payload, 'utf-8')
     return { success: true }
   } catch (error) {
     return { success: false, message: error.message }
@@ -203,27 +206,76 @@ function extractCapabilityFromModelInfo(modelInfo) {
   }
 }
 
-async function tryFetchModelInfo(candidateUrl, headers, modelName) {
-  const response = await fetch(candidateUrl, { method: 'GET', headers })
-  if (!response.ok) return null
-  const data = await response.json()
-  const list = Array.isArray(data?.data) ? data.data : []
-  if (list.length === 0) return null
-  const lowered = String(modelName || '').toLowerCase()
-  const matched = list.find(item => String(item?.id || '').toLowerCase() === lowered)
-    || list.find(item => String(item?.name || '').toLowerCase() === lowered)
-    || null
-  return matched || null
+/** 单次 GET 模型列表尝试；responseBody 为完整响应原文，parsedJson 在解析成功时附带 */
+async function fetchModelInfoAttempt(candidateUrl, headers, modelName) {
+  const attempt = {
+    url: candidateUrl,
+    ok: false,
+    modelInfo: null,
+    status: null,
+    statusText: null,
+    responseBody: null,
+    parsedJson: null,
+    error: null
+  }
+  try {
+    const response = await fetch(candidateUrl, { method: 'GET', headers })
+    attempt.status = response.status
+    attempt.statusText = response.statusText
+    const text = await response.text()
+    attempt.responseBody = text
+    if (!response.ok) {
+      attempt.error = `HTTP ${response.status} ${(response.statusText || '').trim()}`.trim()
+      return attempt
+    }
+    let data
+    try {
+      data = JSON.parse(text)
+    } catch (parseErr) {
+      attempt.error = `响应不是合法 JSON: ${parseErr.message}`
+      return attempt
+    }
+    attempt.parsedJson = data
+    const list = Array.isArray(data?.data) ? data.data : []
+    if (list.length === 0) {
+      attempt.error = 'JSON 中 data 为空数组，未列出任何模型'
+      return attempt
+    }
+    const lowered = String(modelName || '').toLowerCase()
+    const matched = list.find(item => String(item?.id || '').toLowerCase() === lowered)
+      || list.find(item => String(item?.name || '').toLowerCase() === lowered)
+      || null
+    if (!matched) {
+      attempt.error = `在返回的 ${list.length} 个模型中未找到与「${modelName}」匹配的 id 或 name`
+      return attempt
+    }
+    attempt.ok = true
+    attempt.modelInfo = matched
+    return attempt
+  } catch (error) {
+    attempt.error = `请求异常: ${error.message}`
+    return attempt
+  }
 }
 
 ipcMain.handle('detect-model-capabilities', async (event, config) => {
   const { url, apiKey, apiType, modelName } = config || {}
   const normalizedBaseUrl = normalizeBaseUrl(url)
   if (!normalizedBaseUrl) {
-    return { success: false, message: '供应商 URL 为空，无法探测', capabilities: null }
+    return {
+      success: false,
+      message: '供应商 URL 为空，无法探测',
+      capabilities: null,
+      probeDebug: { phase: 'validation', reason: 'empty_base_url' }
+    }
   }
   if (!modelName || !String(modelName).trim()) {
-    return { success: false, message: '模型 ID 为空，无法探测', capabilities: null }
+    return {
+      success: false,
+      message: '模型 ID 为空，无法探测',
+      capabilities: null,
+      probeDebug: { phase: 'validation', reason: 'empty_model_name' }
+    }
   }
 
   const headers = { 'Content-Type': 'application/json' }
@@ -241,14 +293,40 @@ ipcMain.handle('detect-model-capabilities', async (event, config) => {
 
   const uniqueCandidateUrls = Array.from(new Set(candidateUrls))
 
+  const emptyCaps = {
+    contextWindow: null,
+    maxTokens: null,
+    reasoningMode: null,
+    inputTypes: null
+  }
+
   try {
+    const attempts = []
     let modelInfo = null
     for (const candidateUrl of uniqueCandidateUrls) {
-      try {
-        modelInfo = await tryFetchModelInfo(candidateUrl, headers, modelName)
-        if (modelInfo) break
-      } catch (error) {
-        // 忽略单个端点失败，继续尝试其他候选地址
+      const attempt = await fetchModelInfoAttempt(candidateUrl, headers, modelName)
+      attempts.push(attempt)
+      if (attempt.ok && attempt.modelInfo) {
+        modelInfo = attempt.modelInfo
+        break
+      }
+    }
+
+    const probeMeta = {
+      baseUrl: normalizedBaseUrl,
+      modelName: String(modelName).trim(),
+      candidateUrls: uniqueCandidateUrls
+    }
+
+    if (!modelInfo) {
+      return {
+        success: false,
+        message: '无法匹配模型或接口未返回有效列表（详见控制台完整响应）',
+        capabilities: emptyCaps,
+        probeDebug: {
+          ...probeMeta,
+          attempts
+        }
       }
     }
 
@@ -259,12 +337,12 @@ ipcMain.handle('detect-model-capabilities', async (event, config) => {
     if (!contextWindow && !maxTokens) {
       return {
         success: false,
-        message: '未从模型元数据接口获取到 Context Window / Max Tokens',
-        capabilities: {
-          contextWindow: null,
-          maxTokens: null,
-          reasoningMode: inferReasoningMode(modelName),
-          inputTypes: inferInputTypes(modelName)
+        message: '已匹配模型，但未解析到 Context / Max Tokens（详见控制台）',
+        capabilities: emptyCaps,
+        probeDebug: {
+          ...probeMeta,
+          attempts,
+          matchedModelInfo: modelInfo
         }
       }
     }
@@ -277,13 +355,23 @@ ipcMain.handle('detect-model-capabilities', async (event, config) => {
         maxTokens,
         reasoningMode: inferReasoningMode(modelName),
         inputTypes: inferInputTypes(modelName)
+      },
+      probeDebug: {
+        ...probeMeta,
+        attempts,
+        matchedModelInfo: modelInfo
       }
     }
   } catch (error) {
     return {
       success: false,
       message: `探测失败: ${error.message}`,
-      capabilities: null
+      capabilities: null,
+      probeDebug: {
+        phase: 'exception',
+        message: error.message,
+        stack: error.stack ? String(error.stack) : null
+      }
     }
   }
 })
@@ -308,7 +396,7 @@ ipcMain.handle('run-command-in-terminal', async (event, command) => {
 
     const scriptPath = path.join(os.tmpdir(), `llm-model-manager-export-${crypto.randomUUID()}.command`)
     const content = ['#!/bin/bash', 'set -e', script, '', 'echo', 'echo "按回车关闭窗口..."', 'read -r _'].join('\n')
-    await fs.writeFile(scriptPath, content, { mode: 0o755 })
+    await fsPromises.writeFile(scriptPath, content, { mode: 0o755 })
 
     await new Promise((resolve, reject) => {
       execFile('open', ['-a', 'Terminal', scriptPath], (error) => {
@@ -405,7 +493,7 @@ ipcMain.handle('open-html-with-script', async (event, script) => {
 </html>`
 
     const htmlPath = path.join(os.tmpdir(), `llm-model-manager-script-${crypto.randomUUID()}.html`)
-    await fs.writeFile(htmlPath, htmlContent, 'utf-8')
+    await fsPromises.writeFile(htmlPath, htmlContent, 'utf-8')
 
     await shell.openExternal(`file://${htmlPath}`)
 

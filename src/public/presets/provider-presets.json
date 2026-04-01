@@ -106,17 +106,17 @@
   {
     "id": "anthracite-org",
     "name": "Anthracite Org",
-    "apiType": "openai",
+    "apiType": "anthropic",
     "url": "",
-    "endpoint": "/chat/completions",
+    "endpoint": "/v1/messages",
     "website": "https://github.com/anthracite-org"
   },
   {
     "id": "anthropic",
     "name": "Anthropic",
-    "apiType": "openai",
-    "url": "https://api.anthropic.com/v1",
-    "endpoint": "/chat/completions",
+    "apiType": "anthropic",
+    "url": "https://api.anthropic.com",
+    "endpoint": "/v1/messages",
     "website": "https://www.anthropic.com/"
   },
   {

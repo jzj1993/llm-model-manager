@@ -240,6 +240,20 @@ function renderProviderUrlEndpointPresetOptions() {
   setComboboxOptions('endpoint', endpoints.map(value => ({ value, label: value })))
 }
 
+function syncApiTypeUrlHint() {
+  const hintEl = document.getElementById('apiTypeUrlHint')
+  const apiTypeSelect = document.getElementById('apiType')
+  if (!hintEl || !apiTypeSelect) return
+
+  if (apiTypeSelect.value === 'anthropic') {
+    hintEl.textContent =
+      'Anthropic：Base URL 一般为 https://api.anthropic.com（无末尾斜杠），Endpoint 一般为 /v1/messages；最终请求地址为二者拼接。'
+  } else {
+    hintEl.textContent =
+      'OpenAI 兼容：Base URL 多为带版本前缀的根地址（如 https://api.openai.com/v1），Endpoint 多为 /chat/completions；最终请求地址为二者拼接。'
+  }
+}
+
 function updateDefaults() {
   const apiType = document.getElementById('apiType').value
   const urlInput = document.getElementById('url')
@@ -259,10 +273,15 @@ function updateDefaults() {
   if (apiType === 'anthropic') {
     applyDefault(urlInput, 'https://api.anthropic.com', 'https://api.anthropic.com', urlDefaults)
     applyDefault(endpointInput, '/v1/messages', '/v1/messages', endpointDefaults)
-  } else {
+  } else if (apiType === 'openai') {
     applyDefault(urlInput, 'https://api.openai.com/v1', 'https://api.openai.com/v1', urlDefaults)
     applyDefault(endpointInput, '/chat/completions', '/chat/completions', endpointDefaults)
+  } else {
+    applyDefault(urlInput, '', '', urlDefaults)
+    applyDefault(endpointInput, '', '', endpointDefaults)
   }
+
+  syncApiTypeUrlHint()
 }
 
 function initExportOptions() {

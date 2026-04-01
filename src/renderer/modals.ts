@@ -154,6 +154,7 @@ function openProviderModal(index = -1) {
     document.getElementById('endpoint').value = provider.endpoint
     document.getElementById('providerWebsite').value = provider.website || ''
     document.getElementById('apiKey').value = provider.apiKey || ''
+    syncApiTypeUrlHint()
   } else {
     modalTitle.textContent = '添加供应商'
     document.getElementById('providerName').value = ''
@@ -305,7 +306,7 @@ function openModelModal(providerIndex, modelIndex = -1) {
   const probeButtonEl = document.getElementById('probeModelButton')
   renderModelNamePresetOptions(providerIndex)
   if (probeResultEl) {
-    probeResultEl.textContent = '尝试调用模型接口，自动探测 Context Window / Max Tokens'
+    probeResultEl.textContent = '尝试调用接口，自动探测 Context Window / Max Tokens'
     probeResultEl.style.color = '#999'
   }
   if (probeButtonEl) {
@@ -431,31 +432,32 @@ async function probeModelCapabilities() {
     })
 
     const capabilities = result?.capabilities || null
-    if (!result?.success) {
-      clearModelCapabilityFields()
+
+    if (result?.success) {
+      if (capabilities?.contextWindow) {
+        document.getElementById('contextWindow').value = String(capabilities.contextWindow)
+      }
+      if (capabilities?.maxTokens) {
+        document.getElementById('maxTokens').value = String(capabilities.maxTokens)
+      }
+      if (capabilities?.reasoningMode === true) {
+        document.getElementById('reasoningMode').value = 'true'
+      } else if (capabilities?.reasoningMode === false) {
+        document.getElementById('reasoningMode').value = 'false'
+      }
+      if (Array.isArray(capabilities?.inputTypes) && capabilities.inputTypes.length > 0) {
+        document.getElementById('inputTypes').value = capabilities.inputTypes.join(',')
+      }
     }
 
-    if (capabilities?.contextWindow) {
-      document.getElementById('contextWindow').value = String(capabilities.contextWindow)
-    }
-    if (capabilities?.maxTokens) {
-      document.getElementById('maxTokens').value = String(capabilities.maxTokens)
-    }
-    if (capabilities?.reasoningMode === true) {
-      document.getElementById('reasoningMode').value = 'true'
-    } else if (capabilities?.reasoningMode === false) {
-      document.getElementById('reasoningMode').value = 'false'
-    }
-    if (Array.isArray(capabilities?.inputTypes) && capabilities.inputTypes.length > 0) {
-      document.getElementById('inputTypes').value = capabilities.inputTypes.join(',')
-    }
+    console.log('[detectModelCapabilities] 完整结果（含 probeDebug 与各次 responseBody）', result)
 
     if (probeResultEl) {
       probeResultEl.textContent = result?.message || '探测完成'
       probeResultEl.style.color = result?.success ? '#0f766e' : '#b45309'
     }
   } catch (error) {
-    clearModelCapabilityFields()
+    console.error('[detectModelCapabilities] 调用异常', error)
     if (probeResultEl) {
       probeResultEl.textContent = `探测失败: ${error.message}`
       probeResultEl.style.color = '#b91c1c'

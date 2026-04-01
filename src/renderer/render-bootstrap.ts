@@ -129,21 +129,3 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadConfigs()
   renderConfigs()
 })
-
-document.getElementById('providerModal').addEventListener('click', (e) => {
-  if (e.target.id === 'providerModal') {
-    closeProviderModal()
-  }
-})
-
-document.getElementById('modelModal').addEventListener('click', (e) => {
-  if (e.target.id === 'modelModal') {
-    closeModelModal()
-  }
-})
-
-document.getElementById('exportModal').addEventListener('click', (e) => {
-  if (e.target.id === 'exportModal') {
-    closeExportModal()
-  }
-})

@@ -35,6 +35,7 @@
   "build": {
     "appId": "com.jzj.llm-model-manager",
     "productName": "LLM Model Manager",
+    "icon": "build/icon.png",
     "asar": true,
     "directories": {
       "output": "release"
