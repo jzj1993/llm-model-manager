@@ -1,4 +1,5 @@
 let pendingImportedProviders = null
+let hasShownConfigApiError = false
 
 function withModelRuntimeState(model) {
   return {
@@ -67,17 +68,34 @@ function getPersistedProviders() {
 
 async function loadConfigs() {
   try {
+    if (typeof window.electronAPI?.loadConfigs !== 'function') {
+      throw new Error('配置存储 API 未注入（可能未在 Electron 窗口中运行）')
+    }
     const parsed = await window.electronAPI.loadConfigs()
     providers = normalizeProviders(parsed)
   } catch (error) {
     providers = []
-    alert(`加载配置失败，已使用空配置: ${error.message}`)
+    alert(`加载配置失败，已使用空配置: ${String(error?.message || '未知错误')}`)
   }
 }
 
 function saveConfigs() {
   const persistedProviders = getPersistedProviders()
-  void window.electronAPI.saveConfigs(persistedProviders)
+  const saveFn = window.electronAPI?.saveConfigs
+  if (typeof saveFn !== 'function') {
+    if (!hasShownConfigApiError) {
+      hasShownConfigApiError = true
+      alert('配置存储 API 不可用，当前修改不会持久化。请重启应用后重试。')
+    }
+    return
+  }
+  void saveFn(persistedProviders).then((result) => {
+    if (result?.success === false) {
+      alert(`保存配置失败: ${result.message || '未知错误'}`)
+    }
+  }).catch((error) => {
+    alert(`保存配置失败: ${error.message}`)
+  })
 }
 
 function exportJsonConfigs() {
@@ -360,34 +378,27 @@ function getSelectedConfigs() {
 async function renderContentByType(content, type) {
   const normalizedType = type === 'env' ? 'bash' : type
   const renderLanguage = getRenderLanguageFromType(normalizedType)
-  const electronAPI = window.electronAPI
   const text = String(content || '')
   if (renderLanguage === 'markdown') {
-    if (electronAPI?.renderMarkdown) {
+    if (typeof window.renderMarkdown !== 'function') {
+      console.error('Markdown 渲染能力不可用，将以纯文本方式展示。')
       return {
         renderLanguage,
-        isMarkdown: true,
-        html: await electronAPI.renderMarkdown(text)
-      }
-    }
-    if (typeof window.renderMarkdownFallback === 'function') {
-      return {
-        renderLanguage,
-        isMarkdown: true,
-        html: window.renderMarkdownFallback(text)
+        isMarkdown: false,
+        html: escapeHtml(text)
       }
     }
     return {
       renderLanguage,
       isMarkdown: true,
-      html: `<p>${escapeHtml(text)}</p>`
+      html: await window.renderMarkdown(text)
     }
   }
-  if (electronAPI?.highlightCode) {
+  if (typeof window.highlightCode === 'function') {
     return {
       renderLanguage,
       isMarkdown: false,
-      html: electronAPI.highlightCode(text, renderLanguage)
+      html: window.highlightCode(text, renderLanguage)
     }
   }
   return {

@@ -1,5 +1,5 @@
 import 'highlight.js/styles/github.min.css'
-import '../styles.css'
+import hljs from 'highlight.js/lib/common'
 import { marked } from 'marked'
 
 import '../exporters/common'
@@ -29,7 +29,14 @@ const scripts = [
 Object.assign(window, {
   exporters,
   getExporterById,
-  renderMarkdownFallback: (markdown: string) => String(marked.parse(String(markdown || '')))
+  highlightCode: (code: string, language: string) => {
+    try {
+      return hljs.highlight(String(code || ''), { language: String(language || 'plaintext') }).value
+    } catch (error) {
+      return hljs.highlightAuto(String(code || '')).value
+    }
+  },
+  renderMarkdown: (markdown: string) => String(marked.parse(String(markdown || '')))
 })
 
 for (const [index, code] of scripts.entries()) {

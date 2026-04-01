@@ -48,7 +48,8 @@ interface Window {
   getProviderPresetById(id: string): any
   getAllProviderPresets(): any[]
   getAllModelPresets(): any[]
-  renderMarkdownFallback(markdown: string): string
+  highlightCode(code: string, language: string): string
+  renderMarkdown(markdown: string): string
   electronAPI: {
     loadConfigs(): Promise<any[]>
     saveConfigs(configs: any[]): Promise<{ success: boolean; message?: string }>
@@ -57,7 +58,5 @@ interface Window {
     openExternal(target: string): Promise<boolean>
     runCommandInTerminal(command: string): Promise<{ success: boolean; message?: string }>
     openHTMLWithScript(script: string): Promise<{ success: boolean; message?: string }>
-    highlightCode(code: string, language: string): string
-    renderMarkdown(markdown: string): Promise<string>
   }
 }

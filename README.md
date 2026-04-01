@@ -17,19 +17,19 @@
 
 供应商（Provider）和模型（Model）管理：
 
-![](assets/20260401_162042_image.png)
+![](assets/20260401_224339_image.png)
 
 添加供应商（Provider）：
 
-![](assets/20260401_162112_image.png)
+![](assets/20260401_224408_image.png)
 
 添加模型（Model）：
 
-![](assets/20260401_162157_image.png)
+![](assets/20260401_224434_image.png)
 
 导出到常用AI App：
 
-![](assets/20260401_162225_image.png)
+![](assets/20260401_224456_image.png)
 
 ## 下载安装包
 
