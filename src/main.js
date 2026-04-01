@@ -262,7 +262,7 @@ ipcMain.handle('run-command-in-terminal', async (event, command) => {
       return { success: false, message: '命令为空' }
     }
 
-    const scriptPath = path.join(os.tmpdir(), `model-checker-export-${crypto.randomUUID()}.command`)
+    const scriptPath = path.join(os.tmpdir(), `llm-model-manager-export-${crypto.randomUUID()}.command`)
     const content = ['#!/bin/bash', 'set -e', script, '', 'echo', 'echo "按回车关闭窗口..."', 'read -r _'].join('\n')
     await fs.writeFile(scriptPath, content, { mode: 0o755 })
 
@@ -294,7 +294,7 @@ ipcMain.handle('open-html-with-script', async (event, script) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FluentRead 扩展桥接</title>
+  <title>JavaScript 执行页面</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -338,15 +338,15 @@ ipcMain.handle('open-html-with-script', async (event, script) => {
 </head>
 <body>
   <div class="container">
-    <h1>FluentRead 扩展桥接</h1>
-    <p class="info">此页面用于在 FluentRead 扩展中导入模型配置。请确保您的页面包含 <code>fluent-model-checker-container</code> 容器元素。</p>
+    <h1>JavaScript 执行页面</h1>
+    <p class="info">此页面由 LLM Model Manager 生成，用于执行传入的 JavaScript 代码。</p>
     <div id="status"></div>
   </div>
 
   <script>
     try {
       ${javascriptCode}
-      document.getElementById('status').innerHTML = '<div class="status success">配置已成功发送到 FluentRead 扩展！</div>';
+      document.getElementById('status').innerHTML = '<div class="status success">JavaScript 执行完成。</div>';
     } catch (error) {
       document.getElementById('status').innerHTML = '<div class="status error">错误: ' + escapeHtml(error.message) + '</div>';
     }
@@ -360,7 +360,7 @@ ipcMain.handle('open-html-with-script', async (event, script) => {
 </body>
 </html>`
 
-    const htmlPath = path.join(os.tmpdir(), `model-checker-fluentread-${crypto.randomUUID()}.html`)
+    const htmlPath = path.join(os.tmpdir(), `llm-model-manager-script-${crypto.randomUUID()}.html`)
     await fs.writeFile(htmlPath, htmlContent, 'utf-8')
 
     await shell.openExternal(`file://${htmlPath}`)
