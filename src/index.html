@@ -198,14 +198,11 @@
           <div class="export-preview-panel">
             <div id="exportEntries" class="export-entries" style="display:none;"></div>
             <pre id="exportCode" class="code-viewer"></pre>
+            <div class="export-footer-actions">
+              <button id="copyExportContentButton" class="button" onclick="copyExportContent()">复制内容</button>
+              <button id="runExportActionButton" class="button button-success" onclick="runExportAction()" style="display:none;"></button>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div class="modal-footer export-modal-footer">
-        <div class="export-footer-actions">
-          <button id="copyExportContentButton" class="button" onclick="copyExportContent()">复制内容</button>
-          <button id="runExportActionButton" class="button button-success" onclick="runExportAction()" style="display:none;"></button>
         </div>
       </div>
     </div>
@@ -216,14 +213,13 @@
   <script src="exporters/openclaw-manual-exporter.js"></script>
   <script src="exporters/openclaw-cli-exporter.js"></script>
   <script src="exporters/cc-switch-deeplink-exporter.js"></script>
-  <script src="exporters/cc-switch-cli-exporter.js"></script>
-  <script src="exporters/claude-code-cli-exporter.js"></script>
+  <script src="exporters/claude-code-env-exporter.js"></script>
+  <script src="exporters/codex-env-exporter.js"></script>
   <script src="exporters/codex-cli-exporter.js"></script>
 
   <script src="exporters/cherry-studio-deeplink-exporter.js"></script>
   <script src="exporters/aionui-deeplink-exporter.js"></script>
   <script src="exporters/opencat-deeplink-exporter.js"></script>
-  <script src="exporters/ama-deeplink-exporter.js"></script>
 
   <!-- Presets Helper - 必须在其他使用预设数据的脚本之前加载 -->
   <script src="presets/presets-helper.js"></script>

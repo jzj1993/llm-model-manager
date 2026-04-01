@@ -27,10 +27,10 @@ class OpenClawManualExporter extends window.BaseExporter {
 
   resolveModelOptions(config) {
     return {
-      contextWindow: Number.isFinite(config.contextWindow) ? config.contextWindow : null,
-      maxTokens: Number.isFinite(config.maxTokens) ? config.maxTokens : null,
-      reasoning: typeof config.reasoningMode === 'boolean' ? config.reasoningMode : null,
-      input: Array.isArray(config.inputTypes) && config.inputTypes.length > 0 ? config.inputTypes : null
+      contextWindow: Number.isFinite(config.modelContextWindow) ? config.modelContextWindow : null,
+      maxTokens: Number.isFinite(config.modelMaxTokens) ? config.modelMaxTokens : null,
+      reasoning: typeof config.modelReasoningMode === 'boolean' ? config.modelReasoningMode : null,
+      input: Array.isArray(config.modelInputTypes) && config.modelInputTypes.length > 0 ? config.modelInputTypes : null
     }
   }
 
@@ -38,22 +38,22 @@ class OpenClawManualExporter extends window.BaseExporter {
     const providers = {}
     configs.forEach(config => {
       const providerId = String(config.providerId || '').trim()
-      const providerName = config.providerName || config.name
-      const providerKey = providerId || this.toProviderKey(providerName, config.apiType)
-      const apiName = config.apiType === 'anthropic' ? 'anthropic-messages' : 'openai-completions'
+      const providerName = config.providerName
+      const providerKey = providerId || this.toProviderKey(providerName, config.providerApiType)
+      const apiName = config.providerApiType === 'anthropic' ? 'anthropic-messages' : 'openai-completions'
       if (!providers[providerKey]) {
         providers[providerKey] = {
-          baseUrl: this.joinUrl(config.url, config.endpoint),
+          baseUrl: this.joinUrl(config.providerUrl, config.providerEndpoint),
           api: apiName,
-          apiKey: config.apiKey || 'sk-xxx',
+          apiKey: config.providerApiKey || 'sk-xxx',
           models: []
         }
       }
 
       const modelOptions = this.resolveModelOptions(config)
       const model = {
-        id: config.modelName,
-        name: config.name || config.modelName
+        id: config.modelId,
+        name: config.modelId
       }
       if (modelOptions.contextWindow != null) model.contextWindow = modelOptions.contextWindow
       if (modelOptions.maxTokens != null) model.maxTokens = modelOptions.maxTokens
@@ -139,7 +139,7 @@ class OpenClawManualExporter extends window.BaseExporter {
     ].join('\n')
     return [
       {
-        title: `#1 ${configs[0]?.providerName || 'Provider'} / ${configs[0]?.modelName || 'Model'} (+${Math.max(0, configs.length - 1)} 项)`,
+        title: `#1 ${configs[0]?.providerName || 'Provider'} / ${configs[0]?.modelId} (+${Math.max(0, configs.length - 1)} 项)`,
         type: 'markdown',
         content
       }

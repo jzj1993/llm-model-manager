@@ -4,12 +4,12 @@ class CodexCliExporter extends window.BaseExporter {
   }
 
   export(configs) {
-        return configs.map((config, index) => {
+    return configs.map((config, index) => {
       const ctx = buildImportContext(config)
       const escapedBase = ctx.baseUrl.replace(/"/g, '\\"')
       const escapedModel = String(ctx.model || '').replace(/"/g, '\\"')
       return {
-        title: `#${index + 1} ${config.providerName} / ${config.modelName}`,
+        title: `#${index + 1} ${config.providerName} - ${config.modelId}`,
         content: [
           'mkdir -p ~/.codex',
           '[ -f ~/.codex/auth.json ] && cp ~/.codex/auth.json ~/.codex/auth.json.bak',

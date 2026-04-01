@@ -21,7 +21,7 @@ class CherryStudioDeeplinkExporter extends window.BaseExporter {
         return configs.map((config, index) => {
       const ctx = buildImportContext(config)
       return {
-        title: `#${index + 1} ${config.providerName} / ${config.modelName}`,
+        title: `#${index + 1} ${config.providerName} / ${config.modelId}`,
         content: this.buildUrl(ctx),
         type: 'deeplink'
       }

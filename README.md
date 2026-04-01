@@ -51,8 +51,7 @@
 - Codex（命令行）
 - Cherry Studio（Deep Link）
 - AionUI（Deep Link）
-- OpenCat（Deep Link）
-- AMA 问天（Deep Link）
+- OpenCat（Deep Link））
 
 ## 数据与安全
 
