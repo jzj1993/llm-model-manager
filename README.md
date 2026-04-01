@@ -16,6 +16,22 @@
 - 导出预览支持语法高亮与 Markdown 渲染，可直接复制或执行导出动作
 - 本地持久化保存配置与检查状态
 
+供应商（Provider）和模型（Model）管理：
+
+![](assets/20260401_162042_image.png)
+
+添加供应商（Provider）：
+
+![](assets/20260401_162112_image.png)
+
+添加模型（Model）：
+
+![](assets/20260401_162157_image.png)
+
+导出到常用AI App：
+
+![](assets/20260401_162225_image.png)
+
 ## 快速开始
 
 ### 前置要求
