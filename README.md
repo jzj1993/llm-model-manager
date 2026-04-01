@@ -107,7 +107,7 @@ npm run dev
 - 触发方式：
   - 推送标签（如 `v1.1.0`）自动构建并发布到对应 GitHub Release
   - 手动触发工作流（`workflow_dispatch`）
-- 构建顺序（迁移到 `electron-vite` 后）：
+- 构建顺序：
   - 先执行 `npm run build` 生成 `dist`
   - 再执行 `electron-builder` 打包并上传 Release 资产
 - 目标平台：
