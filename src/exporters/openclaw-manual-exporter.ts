@@ -1,4 +1,6 @@
-class OpenClawManualExporter extends window.BaseExporter {
+import { BaseExporter } from './common'
+
+export class OpenClawManualExporter extends BaseExporter {
   constructor() {
     super('openclaw-manual', 'OpenClaw - 手动（推荐）')
   }
@@ -27,33 +29,33 @@ class OpenClawManualExporter extends window.BaseExporter {
 
   resolveModelOptions(config) {
     return {
-      contextWindow: Number.isFinite(config.modelContextWindow) ? config.modelContextWindow : null,
-      maxTokens: Number.isFinite(config.modelMaxTokens) ? config.modelMaxTokens : null,
-      reasoning: typeof config.modelReasoningMode === 'boolean' ? config.modelReasoningMode : null,
-      input: Array.isArray(config.modelInputTypes) && config.modelInputTypes.length > 0 ? config.modelInputTypes : null
+      contextWindow: Number.isFinite(config.model.contextWindow) ? config.model.contextWindow : null,
+      maxTokens: Number.isFinite(config.model.maxTokens) ? config.model.maxTokens : null,
+      reasoning: typeof config.model.reasoningMode === 'boolean' ? config.model.reasoningMode : null,
+      input: Array.isArray(config.model.inputTypes) && config.model.inputTypes.length > 0 ? config.model.inputTypes : null
     }
   }
 
   buildProviders(configs) {
     const providers = {}
     configs.forEach(config => {
-      const providerId = String(config.providerId || '').trim()
-      const providerName = config.providerName
-      const providerKey = providerId || this.toProviderKey(providerName, config.providerApiType)
-      const apiName = config.providerApiType === 'anthropic' ? 'anthropic-messages' : 'openai-completions'
+      const providerId = String(config.provider.id || '')
+      const providerName = config.provider.name
+      const providerKey = providerId || this.toProviderKey(providerName, config.provider.apiType)
+      const apiName = config.provider.apiType === 'anthropic' ? 'anthropic-messages' : 'openai-completions'
       if (!providers[providerKey]) {
         providers[providerKey] = {
-          baseUrl: this.joinUrl(config.providerUrl, config.providerEndpoint),
+          baseUrl: this.joinUrl(config.provider.url, config.provider.endpoint),
           api: apiName,
-          apiKey: config.providerApiKey || 'sk-xxx',
+          apiKey: config.provider.apiKey || 'sk-xxx',
           models: []
         }
       }
 
       const modelOptions = this.resolveModelOptions(config)
       const model = {
-        id: config.modelId,
-        name: config.modelId
+        id: config.model.id,
+        name: config.model.name || config.model.id
       }
       if (modelOptions.contextWindow != null) model.contextWindow = modelOptions.contextWindow
       if (modelOptions.maxTokens != null) model.maxTokens = modelOptions.maxTokens
@@ -139,7 +141,7 @@ class OpenClawManualExporter extends window.BaseExporter {
     ].join('\n')
     return [
       {
-        title: `#1 ${configs[0]?.providerName || 'Provider'} / ${configs[0]?.modelId} (+${Math.max(0, configs.length - 1)} 项)`,
+        title: `#1 ${configs[0]?.provider?.name || configs[0]?.provider?.id || 'Provider'} / ${configs[0]?.model?.id} (+${Math.max(0, configs.length - 1)} 项)`,
         type: 'markdown',
         content
       }
@@ -147,4 +149,3 @@ class OpenClawManualExporter extends window.BaseExporter {
   }
 }
 
-window.ExporterRegistry.registerExporter(new OpenClawManualExporter())

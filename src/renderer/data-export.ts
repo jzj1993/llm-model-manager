@@ -1,3 +1,5 @@
+let pendingImportedProviders = null
+
 function withModelRuntimeState(model) {
   return {
     ...model,
@@ -7,48 +9,196 @@ function withModelRuntimeState(model) {
   }
 }
 
-function toPersistentProvider(provider) {
-  const providerId = String(provider.providerId || '').trim()
-  const providerName = String(provider.name || providerId).trim()
-  return {
-    providerId,
-    name: providerName,
+function normalizeProviders(raw) {
+  if (!Array.isArray(raw)) return []
+  return raw.map((provider) => {
+    const models = Array.isArray(provider?.models)
+      ? provider.models.map((model) => withModelRuntimeState({
+        ...normalizeModelInput({
+          modelId: model?.id,
+          modelName: model?.name,
+          contextWindow: model?.contextWindow,
+          maxTokens: model?.maxTokens,
+          reasoningRaw: model?.reasoningMode === null || model?.reasoningMode === undefined
+            ? ''
+            : (model?.reasoningMode ? 'true' : 'false'),
+          inputTypes: Array.isArray(model?.inputTypes) ? model.inputTypes.join(',') : model?.inputTypes
+        }),
+        status: model?.status,
+        lastCheck: model?.lastCheck,
+        lastMessage: model?.lastMessage
+      }))
+      : []
+    const normalizedProvider = normalizeProviderInput({
+      providerId: provider?.id,
+      providerName: provider?.name,
+      apiType: provider?.apiType,
+      url: provider?.url,
+      endpoint: provider?.endpoint,
+      apiKey: provider?.apiKey,
+      website: provider?.website
+    })
+    return {
+      ...normalizedProvider,
+      models
+    }
+  })
+}
+
+function getPersistedProviders() {
+  return providers.map((provider) => ({
+    id: provider.id,
+    name: provider.name || undefined,
     apiType: provider.apiType,
     url: provider.url,
     endpoint: provider.endpoint,
     website: provider.website || '',
     apiKey: provider.apiKey,
-    models: provider.models.map(model => ({
-      name: model.name,
-      modelName: model.modelName,
+    models: provider.models.map((model) => ({
+      id: model.id,
+      name: model.name || undefined,
       contextWindow: model.contextWindow ?? null,
       maxTokens: model.maxTokens ?? null,
       reasoningMode: model.reasoningMode ?? null,
       inputTypes: model.inputTypes ?? null
     }))
-  }
+  }))
 }
 
-function loadConfigs() {
-  const saved = localStorage.getItem('modelCheckerProviders')
-  if (!saved) {
+async function loadConfigs() {
+  try {
+    const parsed = await window.electronAPI.loadConfigs()
+    providers = normalizeProviders(parsed)
+  } catch (error) {
     providers = []
-    return
+    alert(`加载配置失败，已使用空配置: ${error.message}`)
   }
-  const parsed = JSON.parse(saved)
-  providers = Array.isArray(parsed)
-    ? parsed.map(provider => ({
-      ...provider,
-      providerId: String(provider.providerId || provider.name || '').trim(),
-      name: String(provider.name || provider.providerId || '').trim(),
-      models: Array.isArray(provider.models) ? provider.models.map(withModelRuntimeState) : []
-    }))
-    : []
 }
 
 function saveConfigs() {
-  const persistedProviders = providers.map(toPersistentProvider)
-  localStorage.setItem('modelCheckerProviders', JSON.stringify(persistedProviders))
+  const persistedProviders = getPersistedProviders()
+  void window.electronAPI.saveConfigs(persistedProviders)
+}
+
+function exportJsonConfigs() {
+  try {
+    const payload = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      providers: getPersistedProviders()
+    }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+    anchor.href = url
+    anchor.download = `llm-model-manager-configs-${timestamp}.json`
+    document.body.appendChild(anchor)
+    anchor.click()
+    anchor.remove()
+    URL.revokeObjectURL(url)
+  } catch (error) {
+    alert(`导出 JSON 失败: ${error.message}`)
+  }
+}
+
+function importJsonConfigs() {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'application/json,.json'
+  input.onchange = () => {
+    const file = input.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const text = String(reader.result || '')
+        const parsed = JSON.parse(text)
+        const incomingProviders = Array.isArray(parsed)
+          ? parsed
+          : (Array.isArray(parsed?.providers) ? parsed.providers : null)
+        if (!incomingProviders) {
+          throw new Error('JSON 格式无效：缺少 providers 数组')
+        }
+        const normalizedIncomingProviders = normalizeProviders(incomingProviders)
+        if (providers.length > 0 && normalizedIncomingProviders.length > 0) {
+          pendingImportedProviders = normalizedIncomingProviders
+          openImportConflictModal()
+          return
+        }
+        applyImportedProviders(normalizedIncomingProviders, 'overwrite')
+      } catch (error) {
+        alert(`导入 JSON 失败: ${error.message}`)
+      }
+    }
+    reader.readAsText(file, 'utf-8')
+  }
+  input.click()
+}
+
+function applyImportedProviders(incomingProviders, mode) {
+  if (mode === 'merge') {
+    const mergedById = new Map()
+    for (const provider of providers) {
+      mergedById.set(String(provider.id || '').trim(), provider)
+    }
+    for (const importedProvider of incomingProviders) {
+      const providerId = String(importedProvider.id || '').trim()
+      const existingProvider = mergedById.get(providerId)
+      if (!existingProvider) {
+        mergedById.set(providerId, importedProvider)
+        continue
+      }
+
+      const mergedModelsById = new Map()
+      for (const model of Array.isArray(existingProvider.models) ? existingProvider.models : []) {
+        mergedModelsById.set(String(model?.id || '').trim(), model)
+      }
+      for (const model of Array.isArray(importedProvider.models) ? importedProvider.models : []) {
+        mergedModelsById.set(String(model?.id || '').trim(), model)
+      }
+
+      mergedById.set(providerId, {
+        ...existingProvider,
+        ...importedProvider,
+        models: Array.from(mergedModelsById.values())
+      })
+    }
+    providers = Array.from(mergedById.values())
+  } else {
+    providers = incomingProviders
+  }
+  selectedModelKeys.clear()
+  visibleApiKeyProviders.clear()
+  saveConfigs()
+  renderConfigs()
+  alert(`导入成功，共 ${providers.length} 个供应商`)
+}
+
+function openImportConflictModal() {
+  const modal = document.getElementById('importConflictModal')
+  if (!modal) return
+  modal.classList.add('active')
+}
+
+function closeImportConflictModal() {
+  const modal = document.getElementById('importConflictModal')
+  if (!modal) return
+  modal.classList.remove('active')
+}
+
+function importJsonOverwrite() {
+  if (!Array.isArray(pendingImportedProviders)) return
+  applyImportedProviders(pendingImportedProviders, 'overwrite')
+  pendingImportedProviders = null
+  closeImportConflictModal()
+}
+
+function importJsonMerge() {
+  if (!Array.isArray(pendingImportedProviders)) return
+  applyImportedProviders(pendingImportedProviders, 'merge')
+  pendingImportedProviders = null
+  closeImportConflictModal()
 }
 
 function renderProviderUrlEndpointPresetOptions() {
@@ -200,18 +350,8 @@ function getSelectedConfigs() {
     const model = provider?.models?.[modelIndex]
     if (!provider || !model) continue
     items.push({
-      providerId: provider.providerId,
-      providerName: provider.name || provider.providerId,
-      providerApiType: provider.apiType,
-      providerUrl: provider.url,
-      providerApiKey: provider.apiKey,
-      providerEndpoint: provider.endpoint,
-      modelId: model.modelId,
-      modelName: model.modelName,
-      modelContextWindow: model.contextWindow ?? null,
-      modelMaxTokens: model.maxTokens ?? null,
-      modelReasoningMode: model.reasoningMode ?? null,
-      modelInputTypes: model.inputTypes ?? null
+      provider,
+      model
     })
   }
   return items
@@ -220,17 +360,40 @@ function getSelectedConfigs() {
 async function renderContentByType(content, type) {
   const normalizedType = type === 'env' ? 'bash' : type
   const renderLanguage = getRenderLanguageFromType(normalizedType)
+  const electronAPI = window.electronAPI
+  const text = String(content || '')
   if (renderLanguage === 'markdown') {
+    if (electronAPI?.renderMarkdown) {
+      return {
+        renderLanguage,
+        isMarkdown: true,
+        html: await electronAPI.renderMarkdown(text)
+      }
+    }
+    if (typeof window.renderMarkdownFallback === 'function') {
+      return {
+        renderLanguage,
+        isMarkdown: true,
+        html: window.renderMarkdownFallback(text)
+      }
+    }
     return {
       renderLanguage,
       isMarkdown: true,
-      html: await window.electronAPI.renderMarkdown(String(content || ''))
+      html: `<p>${escapeHtml(text)}</p>`
+    }
+  }
+  if (electronAPI?.highlightCode) {
+    return {
+      renderLanguage,
+      isMarkdown: false,
+      html: electronAPI.highlightCode(text, renderLanguage)
     }
   }
   return {
     renderLanguage,
     isMarkdown: false,
-    html: window.electronAPI.highlightCode(String(content || ''), renderLanguage)
+    html: escapeHtml(text)
   }
 }
 
@@ -244,7 +407,7 @@ function normalizeRenderContentByType(rawContent, type) {
 }
 
 async function renderExportPreview(exporterId) {
-  const exporter = window.ExporterRegistry.getExporter(exporterId)
+  const exporter = getExporterById(exporterId)
   if (!exporter) return
 
   const titleEl = document.getElementById('exportTitle')
@@ -264,7 +427,9 @@ async function renderExportPreview(exporterId) {
     }]
 
   exportEntryItems = sourceEntries.map((entry, index) => {
-    const title = entry?.title || `#${index + 1} ${exportModalConfigs[index]?.providerName || 'Provider'} / ${exportModalConfigs[index]?.modelName || 'Model'}`
+    const providerName = exportModalConfigs[index]?.provider?.name || exportModalConfigs[index]?.provider?.id || 'Provider'
+    const modelName = exportModalConfigs[index]?.model?.name || exportModalConfigs[index]?.model?.id || 'Model'
+    const title = entry?.title || `#${index + 1} ${providerName} / ${modelName}`
     const rawContent = String(entry?.content || '')
     const type = entry?.type || null
     const content = normalizeRenderContentByType(rawContent, type)
@@ -302,7 +467,6 @@ async function renderExportPreview(exporterId) {
 
   titleEl.textContent = `导出到 ${exporter.displayName} (${exportModalConfigs.length} 项)`
 
-  const exporters = window.ExporterRegistry.getAllExporters()
   formatListEl.innerHTML = exporters
     .map(item => `<button class="export-format-item ${item.id === exporterId ? 'active' : ''}" onclick="selectExportFormat('${escapeHtml(item.id)}')">${escapeHtml(item.displayName)}</button>`)
     .join('')
@@ -311,7 +475,6 @@ async function renderExportPreview(exporterId) {
 function openExportModal(selectedConfigs) {
   const modal = document.getElementById('exportModal')
   exportModalConfigs = selectedConfigs
-  const exporters = window.ExporterRegistry.getAllExporters()
   if (!exporters || exporters.length === 0) {
     alert('未找到导出器')
     return

@@ -16,7 +16,7 @@ const path = require('path');
 const CONFIG = {
   openrouterModels: path.join(__dirname, 'openrouter-models.json'),
   openclawModels: path.join(__dirname, 'openclaw-models.json'),
-  output: path.join(__dirname, 'model-presets.json')
+  output: path.join(__dirname, '../../src/public/presets/model-presets.json')
 };
 
 console.log('=== Model提取脚本 ===\n');

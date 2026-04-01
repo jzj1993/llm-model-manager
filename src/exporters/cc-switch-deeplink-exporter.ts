@@ -1,4 +1,6 @@
-class CCSwitchDeepLinkExporter extends window.BaseExporter {
+import { BaseExporter } from './common'
+
+export class CCSwitchDeepLinkExporter extends BaseExporter {
   constructor() {
     super('cc-switch-deeplink', 'CC Switch - Deep Link')
   }
@@ -35,12 +37,12 @@ class CCSwitchDeepLinkExporter extends window.BaseExporter {
    */
   resolveApp(config) {
     // 约定：Anthropic 优先导入到 Claude；其余 OpenAI 兼容优先导入到 Codex
-    return config.providerApiType === 'anthropic' ? 'claude' : 'codex'
+    return config.provider.apiType === 'anthropic' ? 'claude' : 'codex'
   }
 
   buildProviderParams(config) {
-    const endpoint = this.joinUrl(config.providerUrl, config.providerEndpoint)
-    const providerName = String(config.providerName || config.providerId || 'Provider').trim() || 'Provider'
+    const endpoint = this.joinUrl(config.provider.url, config.provider.endpoint)
+    const providerName = String(config.provider.name || config.provider.id || 'Provider') || 'Provider'
     const params = new URLSearchParams({
       resource: 'provider',
       app: this.resolveApp(config),
@@ -48,15 +50,15 @@ class CCSwitchDeepLinkExporter extends window.BaseExporter {
     })
 
     if (endpoint) params.set('endpoint', endpoint)
-    if (config.providerApiKey) params.set('apiKey', String(config.providerApiKey))
-    if (config.modelId) params.set('model', String(config.modelId))
+    if (config.provider.apiKey) params.set('apiKey', String(config.provider.apiKey))
+    if (config.model.id) params.set('model', String(config.model.id))
 
     // 为兼容更多场景，同时附带 JSON 配置（文档中 provider 支持 config + configFormat）
     const providerConfig = {
-      type: config.providerApiType,
+      type: config.provider.apiType,
       endpoint,
-      apiKey: config.providerApiKey || '',
-      model: config.modelId || ''
+      apiKey: config.provider.apiKey || '',
+      model: config.model.id || ''
     }
     params.set('config', this.toBase64(JSON.stringify(providerConfig)))
     params.set('configFormat', 'json')
@@ -69,7 +71,7 @@ class CCSwitchDeepLinkExporter extends window.BaseExporter {
       const params = this.buildProviderParams(config)
       const deepLink = `ccswitch://v1/import?${params.toString()}`
       return {
-        title: `#${index + 1} ${config.providerName || 'Provider'} / ${config.modelId}`,
+        title: `#${index + 1} ${config.provider.name || config.provider.id || 'Provider'} / ${config.model.id}`,
         type: 'deeplink',
         content: deepLink
       }
@@ -77,4 +79,3 @@ class CCSwitchDeepLinkExporter extends window.BaseExporter {
   }
 }
 
-window.ExporterRegistry.registerExporter(new CCSwitchDeepLinkExporter())

@@ -2,22 +2,22 @@
 
 ## 概述
 
-`extract-models.js` 脚本用于从 `openrouter-models.json` 和 `openclaw-models.json` 两个原始JSON文件中提取model信息，合并并去重后保存到 `model-presets.json`。
+`extract-models.js` 脚本用于从 `openrouter-models.json` 和 `openclaw-models.json` 两个原始JSON文件中提取model信息，合并并去重后保存到 `src/public/presets/model-presets.json`。
 
 ## 使用方法
 
 ### 基本用法
 
-在 `src/presets/` 目录下运行：
+在仓库根目录运行：
 
 ```bash
-node extract-models.js
+node scripts/presets/extract-models.js
 ```
 
 ### 或者直接执行
 
 ```bash
-./extract-models.js
+./scripts/presets/extract-models.js
 ```
 
 ## 输入文件
@@ -31,7 +31,7 @@ node extract-models.js
 
 脚本会生成以下文件：
 
-- **model-presets.json** - 合并后的model数据
+- **src/public/presets/model-presets.json** - 合并后的model数据（供应用运行时加载）
 
 ## 输出数据格式
 
@@ -148,7 +148,7 @@ Top 10 Provider (按model数量):
   openrouter: 302个
   openclaw: 819个
 
-保存成功: /Users/jzj/workspace/llm-model-manager/src/presets/model-presets.json
+保存成功: /Users/jzj/workspace/llm-model-manager/src/public/presets/model-presets.json
 文件大小: 399.88 KB
 
 ✓ 完成！
@@ -159,7 +159,7 @@ Top 10 Provider (按model数量):
 脚本也支持作为模块导入使用：
 
 ```javascript
-const extractor = require('./extract-models');
+const extractor = require('./scripts/presets/extract-models');
 
 const openRouterModels = extractor.processOpenRouterModels(data);
 const openClawModels = extractor.processOpenClawModels(data);
@@ -169,7 +169,7 @@ const sorted = extractor.sortModels(merged);
 
 ## 注意事项
 
-1. 脚本会覆盖现有的 `model-presets.json` 文件
+1. 脚本会覆盖现有的 `src/public/presets/model-presets.json` 文件
 2. 如果输入文件不存在或格式错误，脚本会报错并退出
 3. 重复的model id会以OpenClaw的数据为准（后添加的覆盖前面的）
 
@@ -178,6 +178,6 @@ const sorted = extractor.sortModels(merged);
 当需要更新model数据时：
 
 1. 下载最新的 `openrouter-models.json` 和 `openclaw-models.json`
-2. 运行 `node extract-models.js`
+2. 运行 `node scripts/presets/extract-models.js`
 3. 检查生成的统计信息是否合理
 4. 验证 `model-presets.json` 文件内容

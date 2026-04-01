@@ -8,13 +8,12 @@
 
 ## 主要功能
 
-- 多 Provider、多 Model 管理（新增、编辑、删除、复制、拖拽排序）
-- Provider 预设与模型预设（自动补全、联动填充常用字段）
-- 模型可用性检查（单个检查 + 批量检查选中模型）
-- 模型能力探测（自动尝试获取 `Context Window` / `Max Tokens`，并推断 Reasoning 与输入类型）
-- 导出选中模型到多种目标（命令行、Deep Link、手动配置、JavaScript 桥接）
-- 导出预览支持语法高亮与 Markdown 渲染，可直接复制或执行导出动作
-- 本地持久化保存配置与检查状态
+- 管理多个供应商和模型（新增、编辑、删除、复制、排序）
+- 支持模型可用性检查和批量检查
+- 支持模型参数探测（如 Context Window、Max Tokens）
+- 支持一键导出到多个常用 AI 工具
+- 支持导入/导出 JSON 配置，便于备份和迁移
+- 本地保存配置，离线可用
 
 供应商（Provider）和模型（Model）管理：
 
@@ -42,6 +41,16 @@
 2. 在供应商下添加模型（可使用模型预设自动填充参数）。
 3. 对单个模型点击 `检查`，或在顶部勾选后点击 `检查选中模型`。
 4. 需要导出时，勾选模型并点击 `导出选中模型`，选择目标格式后复制或执行。
+5. 需要跨设备/备份配置时，使用右下角 `导出 JSON 配置`。
+6. 导入配置时点击右下角 `导入 JSON 配置`。
+
+## JSON 导入冲突处理
+
+当“当前已有配置”且“导入文件也包含配置”时，应用会弹出选择框：
+
+- `合并导入`：按 `provider.id` 合并；同一 Provider 内按 `model.id` 合并（同 ID 以导入内容为准）
+- `覆盖导入`：使用导入文件替换当前全部配置
+- `取消`：不执行本次导入
 
 ## 导出目标（当前内置）
 
@@ -51,12 +60,12 @@
 - Codex（命令行）
 - Cherry Studio（Deep Link）
 - AionUI（Deep Link）
-- OpenCat（Deep Link））
+- OpenCat（Deep Link）
 
 ## 数据与安全
 
-- 配置数据保存在本地 `localStorage`
-- 存储键：`modelCheckerProviders`
+- 配置数据保存在本地配置文件（Electron `userData` 目录）
+- 默认文件名：`configs.json`
 - API Key 仅用于本地请求与导出内容生成，不会主动上传到第三方服务
 - 执行“命令行导出动作”前请先备份目标配置文件，避免误覆盖
 
@@ -85,9 +94,10 @@ npm start
 npm run dev
 ```
 
-### Harness 自动化测试
+### 文档
 
-- Harness 自动化测试说明：`HARNESS.md`
+- Harness 自动化测试说明：`docs/HARNESS.md`
+- 详细产品文档：`docs/product-logic.md`
 
 ### 发布桌面安装包（GitHub Release）
 

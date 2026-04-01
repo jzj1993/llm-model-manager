@@ -79,7 +79,7 @@ function getProviderPresetNameById(providerId) {
 function renderModelNamePresetOptions(providerIndex) {
   const candidatePresets = getModelPresetCandidates(providerIndex)
   const localModelIds = providers
-    .flatMap(provider => provider.models.map(model => String(model.modelName || '').trim()))
+    .flatMap(provider => provider.models.map(model => String(model.id || '').trim()))
     .filter(Boolean)
 
   // 候选预设已按“当前供应商匹配优先”排序，需保持在最前面；
@@ -147,7 +147,7 @@ function openProviderModal(index = -1) {
   if (index >= 0) {
     modalTitle.textContent = '编辑供应商'
     const provider = providers[index]
-    document.getElementById('providerId').value = provider.providerId || provider.name || ''
+    document.getElementById('providerId').value = provider.id || provider.name || ''
     document.getElementById('providerName').value = provider.name
     document.getElementById('apiType').value = provider.apiType
     document.getElementById('url').value = provider.url
@@ -203,38 +203,30 @@ function toggleProviderModalApiKeyVisibility() {
 }
 
 function saveProvider() {
-  const providerId = document.getElementById('providerId').value.trim()
-  const rawName = document.getElementById('providerName').value.trim()
-  const name = rawName || providerId
-  const apiType = document.getElementById('apiType').value
-  const rawUrl = normalizeUrl(document.getElementById('url').value.trim())
-  const rawEndpoint = normalizeEndpoint(document.getElementById('endpoint').value.trim())
-  const apiKey = document.getElementById('apiKey').value.trim()
-  const website = document.getElementById('providerWebsite').value.trim()
-  const normalizedOpenAI = normalizeOpenAIUrlAndEndpoint(apiType, rawUrl, rawEndpoint)
-  const url = normalizedOpenAI.url
-  const endpoint = normalizedOpenAI.endpoint
+  const provider = normalizeProviderInput({
+    providerId: document.getElementById('providerId').value,
+    providerName: document.getElementById('providerName').value,
+    apiType: document.getElementById('apiType').value,
+    url: document.getElementById('url').value,
+    endpoint: document.getElementById('endpoint').value,
+    apiKey: document.getElementById('apiKey').value,
+    website: document.getElementById('providerWebsite').value
+  })
 
-  if (!providerId || !url || !endpoint) {
+  if (!provider.id || !provider.url || !provider.endpoint) {
     alert('请填写供应商必填字段')
     return
   }
 
-  const provider = {
-    providerId,
-    name,
-    apiType,
-    url,
-    endpoint,
-    website,
-    apiKey,
+  const nextProvider = {
+    ...provider,
     models: editingProviderIndex >= 0 ? providers[editingProviderIndex].models : []
   }
 
   if (editingProviderIndex >= 0) {
-    providers[editingProviderIndex] = provider
+    providers[editingProviderIndex] = nextProvider
   } else {
-    providers.push(provider)
+    providers.push(nextProvider)
   }
 
   selectedModelKeys.clear()
@@ -280,14 +272,14 @@ function duplicateProvider(providerIndex) {
   const source = providers[providerIndex]
   if (!source) return
 
-  const baseName = `${String(source.name || source.providerId || '').trim() || 'Provider'}(copy)`
-  const baseId = `${String(source.providerId || '').trim() || 'provider'}-copy`
+  const baseName = `${String(source.name || source.id || '').trim() || 'Provider'}(copy)`
+  const baseId = `${String(source.id || '').trim() || 'provider'}-copy`
 
   const hasProviderName = (name) => providers.some((item) => String(item.name || '').trim() === name)
-  const hasProviderId = (providerId) => providers.some((item) => String(item.providerId || '').trim() === providerId)
+  const hasProviderId = (providerId) => providers.some((item) => String(item.id || '').trim() === providerId)
 
   const copiedProvider = {
-    providerId: buildUniqueCopyValue(baseId, hasProviderId),
+    id: buildUniqueCopyValue(baseId, hasProviderId),
     name: buildUniqueCopyValue(baseName, hasProviderName),
     apiType: source.apiType,
     url: source.url,
@@ -324,7 +316,7 @@ function openModelModal(providerIndex, modelIndex = -1) {
   if (modelIndex >= 0) {
     titleEl.textContent = '编辑模型'
     const model = providers[providerIndex].models[modelIndex]
-    document.getElementById('modelName').value = model.modelName || ''
+    document.getElementById('modelName').value = model.id || ''
     document.getElementById('modelDisplayName').value = model.name || ''
     document.getElementById('contextWindow').value = model.contextWindow || ''
     document.getElementById('maxTokens').value = model.maxTokens || ''
@@ -356,38 +348,31 @@ function saveModel() {
     return
   }
 
-  const modelName = document.getElementById('modelName').value.trim()
-  const rawDisplayName = document.getElementById('modelDisplayName').value.trim()
-  const name = rawDisplayName || modelName
-  const contextWindow = parseOptionalInteger(document.getElementById('contextWindow').value)
-  const maxTokens = parseOptionalInteger(document.getElementById('maxTokens').value)
-  const reasoningRaw = document.getElementById('reasoningMode').value
-  const inputTypes = parseInputTypes(document.getElementById('inputTypes').value)
-  const reasoningMode = reasoningRaw === '' ? null : reasoningRaw === 'true'
+  const model = normalizeModelInput({
+    modelId: document.getElementById('modelName').value,
+    modelName: document.getElementById('modelDisplayName').value,
+    contextWindow: document.getElementById('contextWindow').value,
+    maxTokens: document.getElementById('maxTokens').value,
+    reasoningRaw: document.getElementById('reasoningMode').value,
+    inputTypes: document.getElementById('inputTypes').value
+  })
 
-  if (!modelName) {
+  if (!model.id) {
     alert('请填写模型 ID')
     return
   }
 
-  const model = withModelRuntimeState({
-    name,
-    modelName,
-    contextWindow,
-    maxTokens,
-    reasoningMode,
-    inputTypes
-  })
+  const nextModel = withModelRuntimeState(model)
 
   const modelList = providers[editingModelProviderIndex].models
   if (editingModelIndex >= 0) {
     const old = modelList[editingModelIndex]
-    model.status = old.status
-    model.lastCheck = old.lastCheck
-    model.lastMessage = old.lastMessage
-    modelList[editingModelIndex] = model
+    nextModel.status = old.status
+    nextModel.lastCheck = old.lastCheck
+    nextModel.lastMessage = old.lastMessage
+    modelList[editingModelIndex] = nextModel
   } else {
-    modelList.push(model)
+    modelList.push(nextModel)
   }
 
   selectedModelKeys.clear()
@@ -509,7 +494,7 @@ async function checkModel(providerIndex, modelIndex) {
       apiType: provider.apiType,
       url: provider.url,
       endpoint: provider.endpoint,
-      modelName: model.modelName,
+      modelName: model.id,
       apiKey: provider.apiKey
     })
 

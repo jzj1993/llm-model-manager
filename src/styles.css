@@ -390,6 +390,17 @@ input:focus, select:focus {
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.bottom-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .toolbar-left {
@@ -417,7 +428,7 @@ input:focus, select:focus {
   word-break: break-word;
 }
 
-.model-row {
+.model-params {
   margin-top: 4px;
   font-size: 12px;
   color: #475569;
@@ -623,22 +634,6 @@ input:focus, select:focus {
   font-size: 14px;
 }
 
-.loading {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: white;
-  animation: spin 1s ease-in-out infinite;
-  margin-right: 8px;
-  vertical-align: middle;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 .hint {
   font-size: 12px;
   color: #999;
@@ -699,6 +694,10 @@ input:focus, select:focus {
 
 .export-modal-content .modal-header {
   margin-bottom: 10px;
+}
+
+.import-conflict-modal-content {
+  max-width: 560px;
 }
 
 .export-modal-content .form-group {

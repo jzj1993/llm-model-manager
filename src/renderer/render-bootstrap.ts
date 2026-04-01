@@ -8,7 +8,7 @@ function renderConfigs() {
   }
 
   providerList.innerHTML = providers.map((provider, providerIndex) => {
-    const providerId = String(provider.providerId || '').trim() || '-'
+    const providerId = String(provider.id || '').trim() || '-'
     const providerDisplayName = String(provider.name || '').trim() || providerId
     const providerSelection = getProviderSelectionState(providerIndex)
     const apiTypeLabel = provider.apiType === 'anthropic' ? 'Anthropic' : 'OpenAI'
@@ -36,7 +36,7 @@ function renderConfigs() {
             </label>
             <div class="model-content">
               <div class="model-top">
-                <div class="model-title"><span class="model-display-name selectable-item">${escapeHtml(model.name || model.modelName)}</span> <span class="model-id selectable-item">${escapeHtml(model.modelName)}</span></div>
+                <div class="model-title"><span class="model-display-name selectable-item">${escapeHtml(model.name || model.id)}</span> <span class="model-id selectable-item">${escapeHtml(model.id)}</span></div>
               </div>
               <div class="model-params">
                 <span class="param-item"><span class="meta-label selectable-item">Context Window:</span> <span class="meta-value selectable-item">${contextWindowText}</span></span> |
@@ -123,10 +123,10 @@ function renderConfigs() {
   updateSelectionControls()
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initComboboxes(['providerId', 'url', 'endpoint', 'modelName'])
   initExportOptions()
-  loadConfigs()
+  await loadConfigs()
   renderConfigs()
 })
 

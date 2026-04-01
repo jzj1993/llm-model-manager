@@ -1,24 +1,15 @@
-const { contextBridge, ipcRenderer } = require('electron')
-const hljs = require('highlight.js/lib/common')
-let markedModulePromise = null
+import { contextBridge, ipcRenderer } from 'electron'
+import hljs from 'highlight.js/lib/common'
+import { marked } from 'marked'
 
-function getMarked() {
-  if (!markedModulePromise) {
-    markedModulePromise = import('marked').then(mod => {
-      const marked = mod.marked || mod.default || mod
-      if (typeof marked.setOptions === 'function') {
-        marked.setOptions({
-          gfm: true,
-          breaks: false
-        })
-      }
-      return marked
-    })
-  }
-  return markedModulePromise
-}
+marked.setOptions({
+  gfm: true,
+  breaks: false
+})
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  loadConfigs: () => ipcRenderer.invoke('load-configs'),
+  saveConfigs: (configs) => ipcRenderer.invoke('save-configs', configs),
   checkModel: (config) => ipcRenderer.invoke('check-model', config),
   detectModelCapabilities: (config) => ipcRenderer.invoke('detect-model-capabilities', config),
   openExternal: (target) => ipcRenderer.invoke('open-external', target),
@@ -33,7 +24,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
   renderMarkdown: async (markdown) => {
     const source = String(markdown || '')
-    const marked = await getMarked()
     const rendered = marked.parse(source)
     return String(rendered).replace(
       /<pre><code class="language-([^"]*)">([\s\S]*?)<\/code><\/pre>/g,

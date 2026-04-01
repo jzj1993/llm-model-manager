@@ -2,6 +2,12 @@ function normalizeUrl(url) {
   return url.replace(/\/+$/, '')
 }
 
+function normalizeApiKey(apiKey) {
+  const raw = String(apiKey || '').trim()
+  if (!raw) return ''
+  return raw.startsWith('sk-') ? raw : `sk-${raw}`
+}
+
 function normalizeEndpoint(endpoint) {
   if (!endpoint) return ''
   return endpoint.startsWith('/') ? endpoint : `/${endpoint}`
@@ -87,24 +93,30 @@ function parseInputTypes(value) {
   return Array.from(new Set(items))
 }
 
-function normalizeOpenAIUrlAndEndpoint(apiType, url, endpoint) {
-  if (apiType !== 'openai') {
-    return { url, endpoint }
-  }
-
-  let normalizedUrl = normalizeUrl(url)
-  let normalizedEndpoint = normalizeEndpoint(endpoint)
-
-  if (normalizedEndpoint.startsWith('/v1/')) {
-    if (!normalizedUrl.endsWith('/v1')) {
-      normalizedUrl = `${normalizedUrl}/v1`
-    }
-    normalizedEndpoint = normalizedEndpoint.replace(/^\/v1/, '')
-    normalizedEndpoint = normalizeEndpoint(normalizedEndpoint)
-  }
-
+function normalizeProviderInput(input) {
+  const providerId = String(input?.providerId || '').trim()
+  const providerName = String(input?.providerName || '').trim()
   return {
-    url: normalizedUrl,
-    endpoint: normalizedEndpoint
+    id: providerId,
+    name: providerName || providerId,
+    apiType: String(input?.apiType || ''),
+    url: normalizeUrl(String(input?.url || '').trim()),
+    endpoint: normalizeEndpoint(String(input?.endpoint || '').trim()),
+    website: String(input?.website || '').trim(),
+    apiKey: normalizeApiKey(input?.apiKey)
   }
 }
+
+function normalizeModelInput(input) {
+  const modelId = String(input?.modelId || '').trim()
+  const modelName = String(input?.modelName || '').trim()
+  return {
+    id: modelId,
+    name: modelName || modelId,
+    contextWindow: parseOptionalInteger(input?.contextWindow),
+    maxTokens: parseOptionalInteger(input?.maxTokens),
+    reasoningMode: input?.reasoningRaw === '' ? null : input?.reasoningRaw === 'true',
+    inputTypes: parseInputTypes(input?.inputTypes)
+  }
+}
+

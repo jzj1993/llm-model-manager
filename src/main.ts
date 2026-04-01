@@ -1,13 +1,19 @@
-const { app, BrowserWindow, ipcMain, shell } = require('electron')
-const path = require('path')
-const os = require('os')
-const fs = require('fs/promises')
-const crypto = require('crypto')
-const { execFile } = require('child_process')
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import path from 'node:path'
+import os from 'node:os'
+import fs from 'node:fs/promises'
+import crypto from 'node:crypto'
+import { execFile } from 'node:child_process'
 
 app.commandLine.appendSwitch('no-sandbox')
+const CONFIG_FILE_NAME = 'configs.json'
 
 let mainWindow
+const gotSingleInstanceLock = app.requestSingleInstanceLock()
+
+if (!gotSingleInstanceLock) {
+  app.quit()
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -23,10 +29,48 @@ function createWindow() {
     }
   })
 
-  mainWindow.loadFile(path.join(__dirname, 'index.html'))
+  if (!app.isPackaged && process.env.ELECTRON_RENDERER_URL) {
+    mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL)
+  } else {
+    mainWindow.loadFile(path.join(__dirname, 'index.html'))
+  }
 }
 
+function getConfigFilePath() {
+  return path.join(app.getPath('userData'), CONFIG_FILE_NAME)
+}
+
+ipcMain.handle('load-configs', async () => {
+  try {
+    const configPath = getConfigFilePath()
+    const content = await fs.readFile(configPath, 'utf-8')
+    const parsed = JSON.parse(content)
+    return Array.isArray(parsed) ? parsed : []
+  } catch (error) {
+    if (error?.code === 'ENOENT') return []
+    return []
+  }
+})
+
+ipcMain.handle('save-configs', async (event, configs) => {
+  try {
+    const configPath = getConfigFilePath()
+    const payload = JSON.stringify(Array.isArray(configs) ? configs : [], null, 2)
+    await fs.mkdir(path.dirname(configPath), { recursive: true })
+    await fs.writeFile(configPath, payload, 'utf-8')
+    return { success: true }
+  } catch (error) {
+    return { success: false, message: error.message }
+  }
+})
+
 app.whenReady().then(createWindow)
+
+app.on('second-instance', () => {
+  if (!mainWindow) return
+  if (mainWindow.isMinimized()) mainWindow.restore()
+  mainWindow.focus()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -114,7 +158,7 @@ ipcMain.handle('check-model', async (event, config) => {
   }
 })
 
-function normalizeUrl(url) {
+function normalizeBaseUrl(url) {
   return String(url || '').trim().replace(/\/+$/, '')
 }
 
@@ -174,7 +218,7 @@ async function tryFetchModelInfo(candidateUrl, headers, modelName) {
 
 ipcMain.handle('detect-model-capabilities', async (event, config) => {
   const { url, apiKey, apiType, modelName } = config || {}
-  const normalizedBaseUrl = normalizeUrl(url)
+  const normalizedBaseUrl = normalizeBaseUrl(url)
   if (!normalizedBaseUrl) {
     return { success: false, message: '供应商 URL 为空，无法探测', capabilities: null }
   }

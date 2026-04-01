@@ -6,3 +6,4 @@ release/
 *.local
 .harness-electron
 .harness-logs
+.electron-vite/

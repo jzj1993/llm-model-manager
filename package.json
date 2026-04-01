@@ -2,14 +2,16 @@
   "name": "llm-model-manager",
   "version": "1.1.0",
   "description": "Electron tool to check if a model is available",
-  "main": "src/main.js",
+  "main": "dist/main.js",
   "scripts": {
-    "start": "electron .",
-    "dev": "electronmon .",
-    "dist": "electron-builder --publish never",
-    "dist:mac": "electron-builder --mac dmg zip --publish never",
-    "dist:win": "electron-builder --win nsis portable --publish never",
-    "dist:linux": "electron-builder --linux AppImage tar.gz --publish never"
+    "presets:extract": "node scripts/presets/extract-models.js",
+    "dev": "electron-vite dev --watch",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "dist": "npm run build && electron-builder --publish never",
+    "dist:mac": "npm run build && electron-builder --mac dmg zip --publish never",
+    "dist:win": "npm run build && electron-builder --win nsis portable --publish never",
+    "dist:linux": "npm run build && electron-builder --linux AppImage tar.gz --publish never"
   },
   "keywords": [
     "electron",
@@ -19,23 +21,26 @@
   "license": "MIT",
   "devDependencies": {
     "@harnessgg/electron": "^0.1.0",
+    "@types/electron": "^1.4.38",
+    "@types/node": "^25.5.0",
     "electron": "^28.0.0",
     "electron-builder": "^26.0.12",
-    "electronmon": "^2.0.4"
+    "electron-vite": "^5.0.0",
+    "typescript": "^6.0.2"
   },
   "dependencies": {
     "highlight.js": "^11.11.1",
     "marked": "^17.0.5"
   },
   "build": {
-    "appId": "com.jzj.modelchecker",
+    "appId": "com.jzj.llm-model-manager",
     "productName": "LLM Model Manager",
     "asar": true,
     "directories": {
       "output": "release"
     },
     "files": [
-      "src/**/*",
+      "dist/**/*",
       "package.json",
       "node_modules/**/*"
     ],

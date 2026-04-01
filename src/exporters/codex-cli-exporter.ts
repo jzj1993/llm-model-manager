@@ -1,26 +1,32 @@
-class CodexCliExporter extends window.BaseExporter {
+import { BaseExporter } from './common'
+
+export class CodexCliExporter extends BaseExporter {
   constructor() {
     super('codex-cli', 'Codex - 命令行')
   }
 
   export(configs) {
     return configs.map((config, index) => {
-      const ctx = buildImportContext(config)
-      const escapedBase = ctx.baseUrl.replace(/"/g, '\\"')
-      const escapedModel = String(ctx.model || '').replace(/"/g, '\\"')
+      const provider = config.provider
+      const model = config.model
+      const providerId = provider.id
+      const providerName = provider.name || providerId
+      const apiKey = provider.apiKey
+      const baseUrl = provider.url
+      const modelId = model.id
       return {
-        title: `#${index + 1} ${config.providerName} - ${config.modelId}`,
+        title: `#${index + 1} ${providerName} - ${modelId}`,
         content: [
           'mkdir -p ~/.codex',
           '[ -f ~/.codex/auth.json ] && cp ~/.codex/auth.json ~/.codex/auth.json.bak',
           '[ -f ~/.codex/config.toml ] && cp ~/.codex/config.toml ~/.codex/config.toml.bak',
           "cat <<'EOF' > ~/.codex/auth.json",
-          JSON.stringify({ OPENAI_API_KEY: ctx.apiKey }, null, 2),
+          JSON.stringify({ OPENAI_API_KEY: apiKey }, null, 2),
           'EOF',
           "cat <<'EOF' > ~/.codex/config.toml",
-          `model = "${escapedModel || 'gpt-5.4'}"`,
+          `model = "${modelId}"`,
           '[providers.default]',
-          `base_url = "${escapedBase}"`,
+          `base_url = "${baseUrl}"`,
           'EOF'
         ].join('\n'),
         type: 'command'
@@ -28,5 +34,3 @@ class CodexCliExporter extends window.BaseExporter {
     })
   }
 }
-
-window.ExporterRegistry.registerExporter(new CodexCliExporter())
