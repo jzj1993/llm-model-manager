@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   detectModelCapabilities: (config) => ipcRenderer.invoke('detect-model-capabilities', config),
   openExternal: (target) => ipcRenderer.invoke('open-external', target),
   runCommandInTerminal: (command) => ipcRenderer.invoke('run-command-in-terminal', command),
+  openHTMLWithScript: (script) => ipcRenderer.invoke('open-html-with-script', script),
   highlightCode: (code, language) => {
     try {
       return hljs.highlight(code, { language }).value

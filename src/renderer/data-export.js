@@ -8,8 +8,11 @@ function withModelRuntimeState(model) {
 }
 
 function toPersistentProvider(provider) {
+  const providerId = String(provider.providerId || '').trim()
+  const providerName = String(provider.name || providerId).trim()
   return {
-    name: provider.name,
+    providerId,
+    name: providerName,
     apiType: provider.apiType,
     url: provider.url,
     endpoint: provider.endpoint,
@@ -36,6 +39,8 @@ function loadConfigs() {
   providers = Array.isArray(parsed)
     ? parsed.map(provider => ({
       ...provider,
+      providerId: String(provider.providerId || provider.name || '').trim(),
+      name: String(provider.name || provider.providerId || '').trim(),
       models: Array.isArray(provider.models) ? provider.models.map(withModelRuntimeState) : []
     }))
     : []
@@ -46,28 +51,25 @@ function saveConfigs() {
   localStorage.setItem('modelCheckerProviders', JSON.stringify(persistedProviders))
 }
 
-function renderInputHistories() {
-  const historyModelIds = providers
-    .flatMap(provider => provider.models.map(model => String(model.modelName || '').trim()))
-    .filter(Boolean)
-  const presetModelIds = Array.isArray(MODEL_ID_PRESETS) ? MODEL_ID_PRESETS : []
-  const modelHistory = Array.from(new Set([...presetModelIds, ...historyModelIds]))
-  const urlHistory = Array.from(new Set(providers.map(item => item.url).filter(Boolean)))
-  const endpointHistory = Array.from(new Set(providers.map(item => item.endpoint).filter(Boolean)))
+function renderProviderUrlEndpointPresetOptions() {
+  const providerPresets = Array.isArray(window.PROVIDER_PRESETS) ? window.PROVIDER_PRESETS : []
+  const urls = Array.from(
+    new Set(
+      providerPresets
+        .map(item => normalizeUrl(String(item.url || '').trim()))
+        .filter(Boolean)
+    )
+  )
+  const endpoints = Array.from(
+    new Set(
+      providerPresets
+        .map(item => normalizeEndpoint(String(item.endpoint || '').trim()))
+        .filter(Boolean)
+    )
+  )
 
-  const modelHistoryList = document.getElementById('modelNameHistory')
-  const urlHistoryList = document.getElementById('urlHistory')
-  const endpointHistoryList = document.getElementById('endpointHistory')
-
-  if (modelHistoryList) {
-    modelHistoryList.innerHTML = modelHistory.map(value => `<option value="${value}"></option>`).join('')
-  }
-  if (urlHistoryList) {
-    urlHistoryList.innerHTML = urlHistory.map(value => `<option value="${value}"></option>`).join('')
-  }
-  if (endpointHistoryList) {
-    endpointHistoryList.innerHTML = endpointHistory.map(value => `<option value="${value}"></option>`).join('')
-  }
+  setComboboxOptions('url', urls.map(value => ({ value, label: value })))
+  setComboboxOptions('endpoint', endpoints.map(value => ({ value, label: value })))
 }
 
 function updateDefaults() {
@@ -102,11 +104,12 @@ function initExportOptions() {
 function getActionButtonText(type) {
   if (type === 'command') return '在命令行运行'
   if (type === 'deeplink') return '调起应用'
+  if (type === 'javascript') return '在浏览器运行'
   return null
 }
 
 function isRunnableType(type) {
-  return type === 'command' || type === 'deeplink'
+  return type === 'command' || type === 'deeplink' || type === 'javascript'
 }
 
 function getRenderLanguageFromType(type) {
@@ -129,7 +132,8 @@ function getSelectedConfigs() {
     const model = provider?.models?.[modelIndex]
     if (!provider || !model) continue
     items.push({
-      providerName: provider.name,
+      providerId: provider.providerId,
+      providerName: provider.name || provider.providerId,
       name: model.name,
       apiType: provider.apiType,
       url: provider.url,
@@ -198,7 +202,7 @@ async function renderExportPreview(exporterId) {
     contentEl.style.display = 'block'
     contentEl.dataset.raw = content
     if (singleRenderLanguage === 'markdown') {
-      contentEl.className = 'code-viewer markdown-view'
+      contentEl.className = 'markdown-view markdown-body'
       contentEl.innerHTML = await window.electronAPI.renderMarkdown(content)
     } else {
       contentEl.className = `code-viewer hljs language-${singleRenderLanguage}`
@@ -333,6 +337,18 @@ async function executeRun(runType, content) {
     const result = await window.electronAPI.runCommandInTerminal(command)
     if (!result?.success) {
       alert(`调起 Terminal 失败: ${result?.message || '未知错误'}`)
+    }
+  }
+
+  if (runType === 'javascript') {
+    const script = String(content || '').trim()
+    if (!script) {
+      alert('没有可执行的 JavaScript 代码')
+      return
+    }
+    const result = await window.electronAPI.openHTMLWithScript(script)
+    if (!result?.success) {
+      alert(`调起浏览器失败: ${result?.message || '未知错误'}`)
     }
   }
 }

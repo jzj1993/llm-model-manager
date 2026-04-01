@@ -281,3 +281,92 @@ ipcMain.handle('run-command-in-terminal', async (event, command) => {
     return { success: false, message: error.message }
   }
 })
+
+ipcMain.handle('open-html-with-script', async (event, script) => {
+  try {
+    const javascriptCode = String(script || '').trim()
+    if (!javascriptCode) {
+      return { success: false, message: 'JavaScript 代码为空' }
+    }
+
+    const htmlContent = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FluentRead 扩展桥接</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background-color: white;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-top: 0;
+    }
+    .info {
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .status {
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px 0;
+      font-weight: 500;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>FluentRead 扩展桥接</h1>
+    <p class="info">此页面用于在 FluentRead 扩展中导入模型配置。请确保您的页面包含 <code>fluent-model-checker-container</code> 容器元素。</p>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    try {
+      ${javascriptCode}
+      document.getElementById('status').innerHTML = '<div class="status success">配置已成功发送到 FluentRead 扩展！</div>';
+    } catch (error) {
+      document.getElementById('status').innerHTML = '<div class="status error">错误: ' + escapeHtml(error.message) + '</div>';
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>`
+
+    const htmlPath = path.join(os.tmpdir(), `model-checker-fluentread-${crypto.randomUUID()}.html`)
+    await fs.writeFile(htmlPath, htmlContent, 'utf-8')
+
+    await shell.openExternal(`file://${htmlPath}`)
+
+    return { success: true }
+  } catch (error) {
+    return { success: false, message: error.message }
+  }
+})

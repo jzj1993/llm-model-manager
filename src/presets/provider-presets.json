@@ -1,0 +1,946 @@
+[
+  {
+    "id": "ai21",
+    "name": "AI21",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.ai21.com/"
+  },
+  {
+    "id": "aicodemirror",
+    "name": "AICodeMirror",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.aicodemirror.com/"
+  },
+  {
+    "id": "aicoding",
+    "name": "AICoding",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://aicoding.com"
+  },
+  {
+    "id": "aigocode",
+    "name": "AIGoCode",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://aigocode.com"
+  },
+  {
+    "id": "aihubmix",
+    "name": "AiHubMix",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://aihubmix.com"
+  },
+  {
+    "id": "aion-labs",
+    "name": "Aion Labs",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.aionlabs.com"
+  },
+  {
+    "id": "alfredpros",
+    "name": "Alfredpros",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://alfredpros.com"
+  },
+  {
+    "id": "alibaba",
+    "name": "Alibaba",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.alibabacloud.com/"
+  },
+  {
+    "id": "aliyun-bailian",
+    "name": "阿里云百炼 (DashScope)",
+    "apiType": "openai",
+    "url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://dashscope.aliyun.com/"
+  },
+  {
+    "id": "allenai",
+    "name": "AllenAI",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://allenai.org/"
+  },
+  {
+    "id": "alpindale",
+    "name": "Alpindale",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://github.com/alpindale"
+  },
+  {
+    "id": "amazon",
+    "name": "Amazon",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://aws.amazon.com/"
+  },
+  {
+    "id": "amazon-bedrock",
+    "name": "Amazon Bedrock",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://aws.amazon.com/bedrock/"
+  },
+  {
+    "id": "anthracite-org",
+    "name": "Anthracite Org",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://github.com/anthracite-org"
+  },
+  {
+    "id": "anthropic",
+    "name": "Anthropic",
+    "apiType": "openai",
+    "url": "https://api.anthropic.com/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://www.anthropic.com/"
+  },
+  {
+    "id": "arcee-ai",
+    "name": "Arcee AI",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.arcee.ai/"
+  },
+  {
+    "id": "aws-bedrock",
+    "name": "AWS Bedrock",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://aws.amazon.com/bedrock/"
+  },
+  {
+    "id": "azure-openai-responses",
+    "name": "Azure OpenAI Responses",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://azure.microsoft.com/en-us/products/ai-services/openai-service"
+  },
+  {
+    "id": "baichuan-ai",
+    "name": "百川智能 Baichuan",
+    "apiType": "openai",
+    "url": "https://api.baichuan-ai.com/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://platform.baichuan-ai.com/"
+  },
+  {
+    "id": "baidu",
+    "name": "Baidu",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.baidu.com/"
+  },
+  {
+    "id": "baidu-qianfan",
+    "name": "百度智能云千帆",
+    "apiType": "openai",
+    "url": "https://qianfan.baidubce.com/v2",
+    "endpoint": "/chat/completions",
+    "website": "https://cloud.baidu.com/product/wenxinworkshop"
+  },
+  {
+    "id": "bailing",
+    "name": "BaiLing",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://bailing.ai"
+  },
+  {
+    "id": "bytedance",
+    "name": "ByteDance",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.bytedance.com/"
+  },
+  {
+    "id": "bytedance-seed",
+    "name": "ByteDance Seed",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.bytedance.com/"
+  },
+  {
+    "id": "cerebras",
+    "name": "Cerebras",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.cerebras.ai/"
+  },
+  {
+    "id": "cognitivecomputations",
+    "name": "Cognitive Computations",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://cognitivecomputations.ai"
+  },
+  {
+    "id": "cohere",
+    "name": "Cohere",
+    "apiType": "openai",
+    "url": "https://api.cohere.ai/compatibility/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://cohere.com/"
+  },
+  {
+    "id": "crazyrouter",
+    "name": "CrazyRouter",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://crazyrouter.ai"
+  },
+  {
+    "id": "ctok-ai",
+    "name": "CTok.ai",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://ctok.ai"
+  },
+  {
+    "id": "cubence",
+    "name": "Cubence",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://cubence.com"
+  },
+  {
+    "id": "deepcogito",
+    "name": "DeepCogito",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://deepcogito.com"
+  },
+  {
+    "id": "deepseek",
+    "name": "DeepSeek",
+    "apiType": "openai",
+    "url": "https://api.deepseek.com/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://platform.deepseek.com/"
+  },
+  {
+    "id": "deepseek-official",
+    "name": "DeepSeek (官方)",
+    "apiType": "openai",
+    "url": "https://api.deepseek.com/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://platform.deepseek.com/"
+  },
+  {
+    "id": "dmxapi",
+    "name": "DMXAPI",
+    "apiType": "openai",
+    "url": "https://www.dmxapi.cn/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://www.dmxapi.cn/"
+  },
+  {
+    "id": "doubaoseed",
+    "name": "DouBaoSeed",
+    "apiType": "openai",
+    "url": "https://ark.cn-beijing.volces.com/api/v3",
+    "endpoint": "/chat/completions",
+    "website": "https://console.volcengine.com/ark"
+  },
+  {
+    "id": "eleutherai",
+    "name": "EleutherAI",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.eleuther.ai/"
+  },
+  {
+    "id": "essentialai",
+    "name": "EssentialAI",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.essential.ai/"
+  },
+  {
+    "id": "github-copilot",
+    "name": "GitHub Copilot",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://github.com/features/copilot"
+  },
+  {
+    "id": "google",
+    "name": "Google",
+    "apiType": "openai",
+    "url": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "endpoint": "/chat/completions",
+    "website": "https://www.google.com/"
+  },
+  {
+    "id": "google-antigravity",
+    "name": "Google Antigravity",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.google.com/"
+  },
+  {
+    "id": "google-gemini-cli",
+    "name": "Google Gemini CLI",
+    "apiType": "openai",
+    "url": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "endpoint": "/chat/completions",
+    "website": "https://ai.google.dev/"
+  },
+  {
+    "id": "google-vertex",
+    "name": "Google Vertex",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://cloud.google.com/vertex-ai"
+  },
+  {
+    "id": "groq",
+    "name": "Groq",
+    "apiType": "openai",
+    "url": "https://api.groq.com/openai/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://groq.com/"
+  },
+  {
+    "id": "gryphe",
+    "name": "Gryphe",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://github.com/gryphe"
+  },
+  {
+    "id": "huggingface",
+    "name": "Hugging Face",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://huggingface.co/"
+  },
+  {
+    "id": "ibm-granite",
+    "name": "IBM Granite",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.ibm.com/granite"
+  },
+  {
+    "id": "inception",
+    "name": "Inception",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://inceptionlabs.ai"
+  },
+  {
+    "id": "inflection",
+    "name": "Inflection",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://inflection.ai/"
+  },
+  {
+    "id": "kat-coder",
+    "name": "KAT-Coder",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://github.com/kat-coder"
+  },
+  {
+    "id": "kimi-coding",
+    "name": "Kimi Coding",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://platform.moonshot.cn/"
+  },
+  {
+    "id": "kimi-for-coding",
+    "name": "Kimi For Coding",
+    "apiType": "openai",
+    "url": "https://api.moonshot.cn/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://platform.moonshot.cn/"
+  },
+  {
+    "id": "kimi-k2-5",
+    "name": "Kimi k2.5",
+    "apiType": "openai",
+    "url": "https://api.moonshot.cn/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://platform.moonshot.cn/"
+  },
+  {
+    "id": "kimi-moonshot",
+    "name": "月之暗面 Kimi (Moonshot)",
+    "apiType": "openai",
+    "url": "https://api.moonshot.cn/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://platform.moonshot.cn/"
+  },
+  {
+    "id": "kwaipilot",
+    "name": "KwaiPilot",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.kwai.com/"
+  },
+  {
+    "id": "lingyi-yi",
+    "name": "零一万物 Yi",
+    "apiType": "openai",
+    "url": "https://api.lingyiwanwu.com/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://platform.lingyiwanwu.com/"
+  },
+  {
+    "id": "liquid",
+    "name": "Liquid",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.liquid.ai/"
+  },
+  {
+    "id": "longcat",
+    "name": "Longcat",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://github.com/longcat"
+  },
+  {
+    "id": "mancer",
+    "name": "Mancer",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://mancer.tech/"
+  },
+  {
+    "id": "meituan",
+    "name": "Meituan",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.meituan.com/"
+  },
+  {
+    "id": "meta-llama",
+    "name": "Meta Llama",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://meta.com/llama/"
+  },
+  {
+    "id": "microsoft",
+    "name": "Microsoft",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.microsoft.com/"
+  },
+  {
+    "id": "micu",
+    "name": "Micu",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://github.com/micu"
+  },
+  {
+    "id": "minimax",
+    "name": "MiniMax",
+    "apiType": "openai",
+    "url": "https://api.minimax.chat/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://www.minimaxi.com/"
+  },
+  {
+    "id": "minimax-cn",
+    "name": "MiniMax CN",
+    "apiType": "openai",
+    "url": "https://api.minimax.chat/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://www.minimaxi.com/"
+  },
+  {
+    "id": "minimax-en",
+    "name": "MiniMax en",
+    "apiType": "openai",
+    "url": "https://api.minimax.chat/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://www.minimaxi.com/"
+  },
+  {
+    "id": "minimax-portal",
+    "name": "MiniMax Portal",
+    "apiType": "openai",
+    "url": "https://api.minimax.chat/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://www.minimaxi.com/"
+  },
+  {
+    "id": "mistral",
+    "name": "Mistral",
+    "apiType": "openai",
+    "url": "https://api.mistral.ai/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://mistral.ai/"
+  },
+  {
+    "id": "mistralai",
+    "name": "MistralAI",
+    "apiType": "openai",
+    "url": "https://api.mistral.ai/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://mistral.ai/"
+  },
+  {
+    "id": "modelscope",
+    "name": "ModelScope",
+    "apiType": "openai",
+    "url": "https://api-inference.modelscope.cn/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://modelscope.cn/"
+  },
+  {
+    "id": "modelscope-official",
+    "name": "魔搭 ModelScope (官方)",
+    "apiType": "openai",
+    "url": "https://api-inference.modelscope.cn/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://modelscope.cn/"
+  },
+  {
+    "id": "moonshotai",
+    "name": "Moonshot AI",
+    "apiType": "openai",
+    "url": "https://api.moonshot.cn/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://platform.moonshot.cn/"
+  },
+  {
+    "id": "morph",
+    "name": "Morph",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.morphllm.com/"
+  },
+  {
+    "id": "nex-agi",
+    "name": "Nex AGI",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://nexagi.com"
+  },
+  {
+    "id": "nousresearch",
+    "name": "NousResearch",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://nousresearch.com/"
+  },
+  {
+    "id": "novita-ai",
+    "name": "Novita AI",
+    "apiType": "openai",
+    "url": "https://api.novita.ai/v3/openai",
+    "endpoint": "/chat/completions",
+    "website": "https://novita.ai/"
+  },
+  {
+    "id": "nvidia",
+    "name": "NVIDIA",
+    "apiType": "openai",
+    "url": "https://integrate.api.nvidia.com/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://build.nvidia.com/"
+  },
+  {
+    "id": "openai",
+    "name": "OpenAI",
+    "apiType": "openai",
+    "url": "https://api.openai.com/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://openai.com/"
+  },
+  {
+    "id": "openai-codex",
+    "name": "OpenAI Codex",
+    "apiType": "openai",
+    "url": "https://api.openai.com/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://openai.com/codex/"
+  },
+  {
+    "id": "opencode",
+    "name": "OpenCode",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://opencode.ai"
+  },
+  {
+    "id": "opencode-go",
+    "name": "OpenCode Go",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://opencode.ai"
+  },
+  {
+    "id": "openrouter",
+    "name": "OpenRouter",
+    "apiType": "openai",
+    "url": "https://openrouter.ai/api/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://openrouter.ai/"
+  },
+  {
+    "id": "packycode",
+    "name": "PackyCode",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://packycode.com"
+  },
+  {
+    "id": "perplexity",
+    "name": "Perplexity",
+    "apiType": "openai",
+    "url": "https://api.perplexity.ai",
+    "endpoint": "/chat/completions",
+    "website": "https://www.perplexity.ai/"
+  },
+  {
+    "id": "prime-intellect",
+    "name": "Prime Intellect",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.primeintellect.ai/"
+  },
+  {
+    "id": "qwen",
+    "name": "Qwen",
+    "apiType": "openai",
+    "url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://dashscope.aliyun.com/"
+  },
+  {
+    "id": "qwen-coder",
+    "name": "Qwen Coder",
+    "apiType": "openai",
+    "url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://dashscope.aliyun.com/"
+  },
+  {
+    "id": "reka",
+    "name": "Reka",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://reka.ai/"
+  },
+  {
+    "id": "rekaai",
+    "name": "Reka AI",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://reka.ai/"
+  },
+  {
+    "id": "relace",
+    "name": "Relace",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://relace.ai"
+  },
+  {
+    "id": "rightcode",
+    "name": "RightCode",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://rightcode.ai"
+  },
+  {
+    "id": "sao10k",
+    "name": "Sao10k",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://github.com/Sao10K"
+  },
+  {
+    "id": "siliconflow",
+    "name": "SiliconFlow",
+    "apiType": "openai",
+    "url": "https://api.siliconflow.cn/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://siliconflow.cn/"
+  },
+  {
+    "id": "siliconflow-en",
+    "name": "SiliconFlow en",
+    "apiType": "openai",
+    "url": "https://api.siliconflow.cn/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://siliconflow.cn/"
+  },
+  {
+    "id": "siliconflow-official",
+    "name": "硅基流动 SiliconFlow (官方)",
+    "apiType": "openai",
+    "url": "https://api.siliconflow.cn/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://siliconflow.cn/"
+  },
+  {
+    "id": "sss-aicode",
+    "name": "SSSAiCode",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://sssaicode.com"
+  },
+  {
+    "id": "stepfun",
+    "name": "StepFun",
+    "apiType": "openai",
+    "url": "https://api.stepfun.com/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://platform.stepfun.com/"
+  },
+  {
+    "id": "stepfun-official",
+    "name": "阶跃星辰 StepFun (官方)",
+    "apiType": "openai",
+    "url": "https://api.stepfun.com/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://platform.stepfun.com/"
+  },
+  {
+    "id": "switchpoint",
+    "name": "Switchpoint",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://switchpoint.ai"
+  },
+  {
+    "id": "tencent",
+    "name": "Tencent",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://cloud.tencent.com/"
+  },
+  {
+    "id": "thedrummer",
+    "name": "TheDrummer",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://github.com/thedrummer"
+  },
+  {
+    "id": "tngtech",
+    "name": "TNG Tech",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.tngtech.com/"
+  },
+  {
+    "id": "undi95",
+    "name": "Undi95",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://github.com/undi95"
+  },
+  {
+    "id": "upstage",
+    "name": "Upstage",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.upstage.ai/"
+  },
+  {
+    "id": "vercel-ai-gateway",
+    "name": "Vercel AI Gateway",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://vercel.com/docs/ai-sdk/ai-gateway"
+  },
+  {
+    "id": "volcengine",
+    "name": "Volcengine",
+    "apiType": "openai",
+    "url": "https://ark.cn-beijing.volces.com/api/v3",
+    "endpoint": "/chat/completions",
+    "website": "https://www.volcengine.com/"
+  },
+  {
+    "id": "volcengine-ark",
+    "name": "火山引擎方舟 Ark",
+    "apiType": "openai",
+    "url": "https://ark.cn-beijing.volces.com/api/v3",
+    "endpoint": "/chat/completions",
+    "website": "https://console.volcengine.com/ark"
+  },
+  {
+    "id": "volcengine-plan",
+    "name": "Volcengine Plan",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.volcengine.com/"
+  },
+  {
+    "id": "writer",
+    "name": "Writer",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://writer.com/"
+  },
+  {
+    "id": "x-ai",
+    "name": "xAI",
+    "apiType": "openai",
+    "url": "https://api.x.ai/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://x.ai/"
+  },
+  {
+    "id": "xai",
+    "name": "XAI",
+    "apiType": "openai",
+    "url": "https://api.x.ai/v1",
+    "endpoint": "/chat/completions",
+    "website": "https://x.ai/"
+  },
+  {
+    "id": "xiaomi",
+    "name": "Xiaomi",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.mi.com/"
+  },
+  {
+    "id": "xiaomi-mimo",
+    "name": "Xiaomi MiMo",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.mi.com/"
+  },
+  {
+    "id": "youyunzhisuan",
+    "name": "优云智算",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://www.youyunzhisuan.com"
+  },
+  {
+    "id": "z-ai",
+    "name": "Z AI",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://z.ai/"
+  },
+  {
+    "id": "zai",
+    "name": "Zai",
+    "apiType": "openai",
+    "url": "",
+    "endpoint": "/chat/completions",
+    "website": "https://z.ai/"
+  },
+  {
+    "id": "zhipu-glm",
+    "name": "Zhipu GLM",
+    "apiType": "openai",
+    "url": "https://open.bigmodel.cn/api/paas/v4",
+    "endpoint": "/chat/completions",
+    "website": "https://open.bigmodel.cn/"
+  },
+  {
+    "id": "zhipu-glm-en",
+    "name": "Zhipu GLM en",
+    "apiType": "openai",
+    "url": "https://open.bigmodel.cn/api/paas/v4",
+    "endpoint": "/chat/completions",
+    "website": "https://open.bigmodel.cn/"
+  },
+  {
+    "id": "zhipu-glm-official",
+    "name": "智谱 GLM (官方)",
+    "apiType": "openai",
+    "url": "https://open.bigmodel.cn/api/paas/v4",
+    "endpoint": "/chat/completions",
+    "website": "https://open.bigmodel.cn/"
+  }
+]

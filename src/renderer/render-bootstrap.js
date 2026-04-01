@@ -1,6 +1,5 @@
 function renderConfigs() {
   const providerList = document.getElementById('providerList')
-  renderInputHistories()
 
   if (providers.length === 0) {
     providerList.innerHTML = '<div class="empty-state">暂无供应商，点击下方按钮添加供应商</div>'
@@ -9,10 +8,12 @@ function renderConfigs() {
   }
 
   providerList.innerHTML = providers.map((provider, providerIndex) => {
+    const providerId = String(provider.providerId || '').trim() || '-'
+    const providerDisplayName = String(provider.name || '').trim() || providerId
     const providerSelection = getProviderSelectionState(providerIndex)
     const apiTypeLabel = provider.apiType === 'anthropic' ? 'Anthropic' : 'OpenAI'
     const apiKeyDisplay = getApiKeyDisplay(provider, providerIndex)
-    const apiKeyEye = visibleApiKeyProviders.has(providerIndex) ? '🙈' : '👁️'
+    const apiKeyVisible = visibleApiKeyProviders.has(providerIndex)
     const website = String(provider.website || '').trim()
     const websiteText = website || '-'
     const websiteHtml = website
@@ -35,7 +36,7 @@ function renderConfigs() {
             </label>
             <div class="model-content">
               <div class="model-top">
-                <h2 class="model-name"><span class="selectable-item">${escapeHtml(model.modelName)}</span> <span class="selectable-item">(${escapeHtml(model.name || model.modelName)})</span></h2>
+                <div class="model-title"><span class="model-display-name selectable-item">${escapeHtml(model.name || model.modelName)}</span> <span class="model-id selectable-item">${escapeHtml(model.modelName)}</span></div>
               </div>
               <div class="model-params">
                 <span class="param-item"><span class="meta-label selectable-item">Context Window:</span> <span class="meta-value selectable-item">${contextWindowText}</span></span> |
@@ -63,9 +64,10 @@ function renderConfigs() {
             <label class="row-checkbox-hit">
               <input class="row-checkbox provider-checkbox" data-provider-index="${providerIndex}" type="checkbox" ${providerSelection.checked ? 'checked' : ''} onchange="toggleProviderSelect(${providerIndex}, this.checked)">
             </label>
-            <h2 class="provider-name">${escapeHtml(provider.name)}</h2>
+            <div class="provider-title"><span class="provider-display-name selectable-item">${escapeHtml(providerDisplayName)}</span> <span class="provider-id selectable-item">${escapeHtml(providerId)}</span></div>
             <div class="provider-actions">
               <button class="button" onclick="openModelModal(${providerIndex})">+ 添加模型</button>
+              <button class="button button-secondary" onclick="duplicateProvider(${providerIndex})">复制</button>
               <button class="button button-secondary" onclick="openProviderModal(${providerIndex})">编辑</button>
               <button class="button button-danger provider-delete-button" onclick="deleteProvider(${providerIndex})">删除</button>
               <span class="drag-handle" draggable="true" ondragstart="handleProviderDragStart(${providerIndex}, event)" title="拖拽供应商排序">⠿</span>
@@ -81,7 +83,27 @@ function renderConfigs() {
             <span class="meta-label selectable-item">地址:</span> <span class="meta-value selectable-item">${escapeHtml(joinUrl(provider.url, provider.endpoint))}</span>
           </div>
           <div class="provider-row">
-            <span class="meta-label selectable-item">密钥:</span> <span class="meta-value selectable-item">${escapeHtml(apiKeyDisplay)}</span><button class="api-key-eye" onclick="toggleApiKeyVisibility(${providerIndex}, event)" title="显示或隐藏 API Key">${apiKeyEye}</button>
+            <span class="meta-label selectable-item">密钥:</span>
+            <span class="meta-value selectable-item">${escapeHtml(apiKeyDisplay)}</span>
+            <button
+              class="api-key-eye api-key-eye-inline"
+              data-visible="${apiKeyVisible ? 'true' : 'false'}"
+              onclick="toggleProviderListApiKeyVisibility(${providerIndex}, event)"
+              aria-label="${apiKeyVisible ? '隐藏 API Key' : '显示 API Key'}"
+              title="${apiKeyVisible ? '隐藏 API Key' : '显示 API Key'}"
+            >
+              <span class="sr-only">切换 API Key 可见性</span>
+              <svg class="eye-icon eye-open" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                <circle cx="12" cy="12" r="3.2"></circle>
+              </svg>
+              <svg class="eye-icon eye-closed" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 3l18 18"></path>
+                <path d="M10.6 6.2A11.3 11.3 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-4.1 4.4"></path>
+                <path d="M8.6 8.6A5 5 0 0 0 7 12a5 5 0 0 0 7.4 4.4"></path>
+                <path d="M2 12s1.7-2.9 4.8-4.7"></path>
+              </svg>
+            </button>
           </div>
           <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
             ${modelHtml || '<div class="empty-state" style="padding: 10px;">该供应商下暂无模型</div>'}
@@ -102,6 +124,7 @@ function renderConfigs() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  initComboboxes(['providerId', 'url', 'endpoint', 'modelName'])
   initExportOptions()
   loadConfigs()
   renderConfigs()

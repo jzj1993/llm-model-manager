@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LLM模型API管理器</title>
   <link rel="stylesheet" href="../node_modules/highlight.js/styles/github.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -44,15 +45,23 @@
       </div>
 
       <div class="form-group">
-        <label for="providerPreset">预设供应商</label>
-        <select id="providerPreset" onchange="applyProviderPreset()">
-          <option value="">不使用预设</option>
-        </select>
+        <label for="providerId">供应商 ID</label>
+        <input
+          type="text"
+          id="providerId"
+          placeholder="例如: openai"
+          onchange="onProviderIdCommitted()"
+        >
+        <div class="hint">可选预设值或自定义；自定义格式请使用小写加连字符，例如：my-provider</div>
       </div>
 
       <div class="form-group">
-        <label for="providerName">供应商名称</label>
-        <input type="text" id="providerName" placeholder="例如: OpenAI 官方">
+        <label for="providerName">供应商名称（可选）</label>
+        <input
+          type="text"
+          id="providerName"
+          placeholder="例如: OpenAI 官方"
+        >
       </div>
 
       <div class="form-group">
@@ -71,20 +80,40 @@
       <div class="form-row">
         <div class="form-group">
           <label for="url">Base URL</label>
-          <input type="text" id="url" list="urlHistory" placeholder="https://api.openai.com">
-          <datalist id="urlHistory"></datalist>
+          <input type="text" id="url" placeholder="https://api.openai.com">
         </div>
 
         <div class="form-group">
           <label for="endpoint">Endpoint</label>
-          <input type="text" id="endpoint" list="endpointHistory" placeholder="/v1/chat/completions">
-          <datalist id="endpointHistory"></datalist>
+          <input type="text" id="endpoint" placeholder="/v1/chat/completions">
         </div>
       </div>
 
       <div class="form-group">
         <label for="apiKey">API Key (可选)</label>
-        <input type="password" id="apiKey" placeholder="sk-...">
+        <div class="password-input-wrap">
+          <input type="password" id="apiKey" placeholder="sk-...">
+          <button
+            type="button"
+            id="toggleApiKeyButton"
+            class="api-key-eye"
+            onclick="toggleProviderModalApiKeyVisibility()"
+            aria-label="显示或隐藏 API Key"
+            title="显示或隐藏 API Key"
+          >
+            <span class="sr-only">切换 API Key 可见性</span>
+            <svg class="eye-icon eye-open" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+              <circle cx="12" cy="12" r="3.2"></circle>
+            </svg>
+            <svg class="eye-icon eye-closed" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 3l18 18"></path>
+              <path d="M10.6 6.2A11.3 11.3 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-4.1 4.4"></path>
+              <path d="M8.6 8.6A5 5 0 0 0 7 12a5 5 0 0 0 7.4 4.4"></path>
+              <path d="M2 12s1.7-2.9 4.8-4.7"></path>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div class="modal-footer">
@@ -103,8 +132,12 @@
 
       <div class="form-group">
         <label for="modelName">模型 ID</label>
-        <input type="text" id="modelName" list="modelNameHistory" placeholder="例如: gpt-5.4">
-        <datalist id="modelNameHistory"></datalist>
+        <input
+          type="text"
+          id="modelName"
+          placeholder="例如: gpt-5.4"
+          onchange="applyModelPresetFromModelName()"
+        >
       </div>
 
       <div class="form-group">
@@ -116,7 +149,7 @@
         <div class="model-advanced-title">模型能力与参数（可选）</div>
         <div class="hint" style="display:flex; align-items:center; gap:8px; margin: 0 0 12px 0;">
           <button id="probeModelButton" class="button button-secondary" onclick="probeModelCapabilities()">探测模型参数</button>
-          <span id="modelProbeResult">可自动探测 Context Window / Max Tokens</span>
+          <span id="modelProbeResult">尝试调用接口，自动探测 Context Window / Max Tokens</span>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -184,7 +217,6 @@
   <script src="exporters/openclaw-cli-exporter.js"></script>
   <script src="exporters/cc-switch-deeplink-exporter.js"></script>
   <script src="exporters/cc-switch-cli-exporter.js"></script>
-  <script src="exporters/fluentread-extension-exporter.js"></script>
   <script src="exporters/claude-code-cli-exporter.js"></script>
   <script src="exporters/codex-cli-exporter.js"></script>
 
@@ -192,10 +224,13 @@
   <script src="exporters/aionui-deeplink-exporter.js"></script>
   <script src="exporters/opencat-deeplink-exporter.js"></script>
   <script src="exporters/ama-deeplink-exporter.js"></script>
-  <script src="renderer/provider-presets.js"></script>
-  <script src="renderer/model-id-presets.js"></script>
+
+  <!-- Presets Helper - 必须在其他使用预设数据的脚本之前加载 -->
+  <script src="presets/presets-helper.js"></script>
+
   <script src="renderer/state.js"></script>
   <script src="renderer/utils.js"></script>
+  <script src="renderer/combobox.js"></script>
   <script src="renderer/data-export.js"></script>
   <script src="renderer/interactions.js"></script>
   <script src="renderer/modals.js"></script>

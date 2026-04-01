@@ -28,8 +28,9 @@ class OpenClawCliExporter extends window.BaseExporter {
   buildProviders(configs) {
     const providers = {}
     configs.forEach(config => {
+      const providerId = String(config.providerId || '').trim()
       const providerName = config.providerName || config.name
-      const providerKey = this.toProviderKey(providerName, config.apiType)
+      const providerKey = providerId || this.toProviderKey(providerName, config.apiType)
       const apiName = config.apiType === 'anthropic' ? 'anthropic-messages' : 'openai-completions'
       const modelOptions = this.resolveModelOptions(config)
       if (!providers[providerKey]) {

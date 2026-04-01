@@ -37,8 +37,9 @@ class OpenClawManualExporter extends window.BaseExporter {
   buildProviders(configs) {
     const providers = {}
     configs.forEach(config => {
+      const providerId = String(config.providerId || '').trim()
       const providerName = config.providerName || config.name
-      const providerKey = this.toProviderKey(providerName, config.apiType)
+      const providerKey = providerId || this.toProviderKey(providerName, config.apiType)
       const apiName = config.apiType === 'anthropic' ? 'anthropic-messages' : 'openai-completions'
       if (!providers[providerKey]) {
         providers[providerKey] = {
@@ -118,7 +119,9 @@ class OpenClawManualExporter extends window.BaseExporter {
     const content = [
       '依次修改以下三个文件，保存后运行 `openclaw gateway restart` 重启 OpenClaw 即可生效。',
       '',
-      '**其中 profile 和 provider 的名字可以修改，但需要保持一致。**',
+      '- **其中 profile 和 provider 的名字可以修改，但需要保持一致。**',
+      '- **为了避免自定义 provider 命名冲突，建议使用这里的手动方式配置OpenClaw**',
+      '',
       '## `~/.openclaw/agents/main/agent/auth-profiles.json`',
       '```json',
       JSON.stringify(authProfiles, null, 2),

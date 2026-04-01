@@ -61,7 +61,7 @@ function toggleSelectAll(checked) {
   renderConfigs()
 }
 
-function toggleApiKeyVisibility(providerIndex, event) {
+function toggleProviderListApiKeyVisibility(providerIndex, event) {
   if (event) {
     event.preventDefault()
     event.stopPropagation()

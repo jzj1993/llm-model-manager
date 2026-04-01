@@ -1,10 +1,7 @@
-function renderProviderPresetOptions() {
-  const presetSelect = document.getElementById('providerPreset')
-  if (!presetSelect) return
-
-  const defaultOption = '<option value="">不使用预设</option>'
-  const presetOptions = PROVIDER_PRESETS.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`)
-  presetSelect.innerHTML = [defaultOption, ...presetOptions].join('')
+function renderProviderIdPresetOptions() {
+  const presets = Array.isArray(window.PROVIDER_PRESETS) ? window.PROVIDER_PRESETS : []
+  const ids = Array.from(new Set(presets.map(item => String(item.id || '').trim()).filter(Boolean)))
+  setComboboxOptions('providerId', ids.map(id => ({ value: id, label: id })))
 }
 
 function findMatchedPreset(provider) {
@@ -13,7 +10,9 @@ function findMatchedPreset(provider) {
   const normalizedEndpoint = normalizeEndpoint(String(provider.endpoint || '').trim())
   const normalizedName = String(provider.name || '').trim().toLowerCase()
 
-  return PROVIDER_PRESETS.find((preset) => {
+  const presets = Array.isArray(window.PROVIDER_PRESETS) ? window.PROVIDER_PRESETS : []
+
+  return presets.find((preset) => {
     const sameName = preset.name.toLowerCase() === normalizedName
     const sameUrl = normalizeUrl(String(preset.url || '')) === normalizedUrl
     const sameEndpoint = normalizeEndpoint(String(preset.endpoint || '')) === normalizedEndpoint
@@ -21,52 +20,144 @@ function findMatchedPreset(provider) {
   }) || null
 }
 
-function applyProviderPreset() {
-  const presetSelect = document.getElementById('providerPreset')
-  if (!presetSelect) return
-  const preset = getProviderPresetById(presetSelect.value)
-  if (!preset) return
-
+function onProviderIdCommitted() {
+  const providerIdInput = document.getElementById('providerId')
+  if (!providerIdInput) return
+  const providerId = String(providerIdInput.value || '').trim()
+  if (!providerId) return
+  const preset = getProviderPresetById(providerId)
   const providerNameInput = document.getElementById('providerName')
+  if (!providerNameInput) return
+  if (!preset) {
+    providerNameInput.value = formatProviderNameFromId(providerId)
+    return
+  }
+
   const apiTypeSelect = document.getElementById('apiType')
   const urlInput = document.getElementById('url')
   const endpointInput = document.getElementById('endpoint')
   const providerWebsiteInput = document.getElementById('providerWebsite')
 
-  providerNameInput.value = preset.name
+  providerIdInput.value = preset.id
+  providerNameInput.value = preset.name || providerNameInput.value
   apiTypeSelect.value = preset.apiType
   urlInput.value = preset.url
   endpointInput.value = preset.endpoint
   providerWebsiteInput.value = preset.website || preset.url || ''
 }
 
+function formatProviderNameFromId(providerId) {
+  const normalizedId = String(providerId || '').trim().toLowerCase()
+  if (!normalizedId) return ''
+  return normalizedId
+    .split('-')
+    .map(part => part ? `${part[0].toUpperCase()}${part.slice(1)}` : '')
+    .filter(Boolean)
+    .join(' ')
+}
+
+function getModelPresetCandidates(providerIndex) {
+  const allModelPresets = typeof window.getAllModelPresets === 'function' ? window.getAllModelPresets() : []
+  if (!Array.isArray(allModelPresets) || allModelPresets.length === 0) return []
+  const provider = providers[providerIndex]
+  const matchedProviderPreset = findMatchedPreset(provider)
+  if (!matchedProviderPreset) return allModelPresets
+  const matchedProviderId = String(matchedProviderPreset.id || '')
+  const matchedModels = allModelPresets.filter(item => String(item.provider || '') === matchedProviderId)
+  const otherModels = allModelPresets.filter(item => String(item.provider || '') !== matchedProviderId)
+  return [...matchedModels, ...otherModels]
+}
+
+function getProviderPresetNameById(providerId) {
+  const normalizedId = String(providerId || '').trim()
+  if (!normalizedId) return ''
+  const providerPresets = Array.isArray(window.PROVIDER_PRESETS) ? window.PROVIDER_PRESETS : []
+  const matchedProvider = providerPresets.find(item => String(item.id || '').trim() === normalizedId)
+  return String(matchedProvider?.name || '').trim()
+}
+
+function renderModelNamePresetOptions(providerIndex) {
+  const candidatePresets = getModelPresetCandidates(providerIndex)
+  const localModelIds = providers
+    .flatMap(provider => provider.models.map(model => String(model.modelName || '').trim()))
+    .filter(Boolean)
+
+  // 候选预设已按“当前供应商匹配优先”排序，需保持在最前面；
+  // 本地模型仅作为补充，追加到末尾，避免打乱优先级。
+  const orderedPresetIds = Array.from(
+    new Set(candidatePresets.map(item => String(item.id || '').trim()).filter(Boolean))
+  )
+  const localOnlyIds = Array.from(new Set(localModelIds)).filter(id => !orderedPresetIds.includes(id))
+  const mergedIds = [...orderedPresetIds, ...localOnlyIds]
+
+  const options = mergedIds.map((id) => {
+    const matched = candidatePresets.find(item => String(item.id || '').trim() === id)
+    const modelName = matched ? String(matched.name || '').trim() : ''
+    const providerName = matched ? getProviderPresetNameById(matched.provider) : ''
+    const hint = modelName && providerName
+      ? `${modelName} - ${providerName}`
+      : (modelName || providerName)
+    return { value: id, label: hint || id }
+  })
+  setComboboxOptions('modelName', options)
+}
+
+function applyModelPresetFromModelName() {
+  if (editingModelProviderIndex < 0 || !providers[editingModelProviderIndex]) return
+  const modelNameInput = document.getElementById('modelName')
+  if (!modelNameInput) return
+  const modelId = String(modelNameInput.value || '').trim()
+  if (!modelId) return
+
+  const candidatePresets = getModelPresetCandidates(editingModelProviderIndex)
+  const preset = candidatePresets.find(item => String(item.id || '').trim() === modelId)
+  if (!preset) return
+
+  const modelDisplayNameInput = document.getElementById('modelDisplayName')
+  const contextWindowInput = document.getElementById('contextWindow')
+  const maxTokensInput = document.getElementById('maxTokens')
+  const reasoningModeInput = document.getElementById('reasoningMode')
+  const inputTypesInput = document.getElementById('inputTypes')
+
+  if (modelDisplayNameInput && !modelDisplayNameInput.value.trim()) {
+    modelDisplayNameInput.value = String(preset.name || '').trim()
+  }
+  if (contextWindowInput && Number.isFinite(preset.contextWindow) && preset.contextWindow > 0) {
+    contextWindowInput.value = String(preset.contextWindow)
+  }
+  if (maxTokensInput && Number.isFinite(preset.maxCompletionTokens) && preset.maxCompletionTokens > 0) {
+    maxTokensInput.value = String(preset.maxCompletionTokens)
+  }
+  if (reasoningModeInput && typeof preset.reasoning === 'boolean') {
+    reasoningModeInput.value = preset.reasoning ? 'true' : 'false'
+  }
+  if (inputTypesInput && Array.isArray(preset.input) && preset.input.length > 0) {
+    inputTypesInput.value = preset.input.join(',')
+  }
+  updateReasoningModeStyle()
+}
+
 function openProviderModal(index = -1) {
   editingProviderIndex = index
   const modal = document.getElementById('providerModal')
   const modalTitle = document.getElementById('providerModalTitle')
-  const presetSelect = document.getElementById('providerPreset')
-  renderProviderPresetOptions()
-  renderInputHistories()
+  renderProviderIdPresetOptions()
+  renderProviderUrlEndpointPresetOptions()
 
   if (index >= 0) {
     modalTitle.textContent = '编辑供应商'
     const provider = providers[index]
+    document.getElementById('providerId').value = provider.providerId || provider.name || ''
     document.getElementById('providerName').value = provider.name
     document.getElementById('apiType').value = provider.apiType
     document.getElementById('url').value = provider.url
     document.getElementById('endpoint').value = provider.endpoint
     document.getElementById('providerWebsite').value = provider.website || ''
     document.getElementById('apiKey').value = provider.apiKey || ''
-    const matchedPreset = findMatchedPreset(provider)
-    if (presetSelect) {
-      presetSelect.value = matchedPreset ? matchedPreset.id : ''
-    }
   } else {
     modalTitle.textContent = '添加供应商'
-    if (presetSelect) {
-      presetSelect.value = ''
-    }
     document.getElementById('providerName').value = ''
+    document.getElementById('providerId').value = ''
     document.getElementById('apiType').value = 'openai'
     document.getElementById('url').value = ''
     updateDefaults()
@@ -74,17 +165,47 @@ function openProviderModal(index = -1) {
     document.getElementById('apiKey').value = ''
   }
 
+  resetApiKeyVisibility()
+
   modal.classList.add('active')
 }
 
 function closeProviderModal() {
   const modal = document.getElementById('providerModal')
   modal.classList.remove('active')
+  resetApiKeyVisibility()
   editingProviderIndex = -1
 }
 
+function resetApiKeyVisibility() {
+  const apiKeyInput = document.getElementById('apiKey')
+  const toggleButton = document.getElementById('toggleApiKeyButton')
+  if (apiKeyInput) {
+    apiKeyInput.type = 'password'
+  }
+  if (toggleButton) {
+    toggleButton.dataset.visible = 'false'
+    toggleButton.setAttribute('aria-label', '显示 API Key')
+    toggleButton.setAttribute('title', '显示 API Key')
+  }
+}
+
+function toggleProviderModalApiKeyVisibility() {
+  const apiKeyInput = document.getElementById('apiKey')
+  const toggleButton = document.getElementById('toggleApiKeyButton')
+  if (!apiKeyInput || !toggleButton) return
+  const isPassword = apiKeyInput.type === 'password'
+  apiKeyInput.type = isPassword ? 'text' : 'password'
+  const visible = isPassword
+  toggleButton.dataset.visible = visible ? 'true' : 'false'
+  toggleButton.setAttribute('aria-label', visible ? '隐藏 API Key' : '显示 API Key')
+  toggleButton.setAttribute('title', visible ? '隐藏 API Key' : '显示 API Key')
+}
+
 function saveProvider() {
-  const name = document.getElementById('providerName').value.trim()
+  const providerId = document.getElementById('providerId').value.trim()
+  const rawName = document.getElementById('providerName').value.trim()
+  const name = rawName || providerId
   const apiType = document.getElementById('apiType').value
   const rawUrl = normalizeUrl(document.getElementById('url').value.trim())
   const rawEndpoint = normalizeEndpoint(document.getElementById('endpoint').value.trim())
@@ -94,12 +215,13 @@ function saveProvider() {
   const url = normalizedOpenAI.url
   const endpoint = normalizedOpenAI.endpoint
 
-  if (!name || !url || !endpoint) {
+  if (!providerId || !url || !endpoint) {
     alert('请填写供应商必填字段')
     return
   }
 
   const provider = {
+    providerId,
     name,
     apiType,
     url,
@@ -145,6 +267,43 @@ function deleteProvider(providerIndex) {
   renderConfigs()
 }
 
+function buildUniqueCopyValue(initialValue, hasValue) {
+  if (!hasValue(initialValue)) return initialValue
+  let index = 2
+  while (hasValue(`${initialValue}-${index}`)) {
+    index += 1
+  }
+  return `${initialValue}-${index}`
+}
+
+function duplicateProvider(providerIndex) {
+  const source = providers[providerIndex]
+  if (!source) return
+
+  const baseName = `${String(source.name || source.providerId || '').trim() || 'Provider'}(copy)`
+  const baseId = `${String(source.providerId || '').trim() || 'provider'}-copy`
+
+  const hasProviderName = (name) => providers.some((item) => String(item.name || '').trim() === name)
+  const hasProviderId = (providerId) => providers.some((item) => String(item.providerId || '').trim() === providerId)
+
+  const copiedProvider = {
+    providerId: buildUniqueCopyValue(baseId, hasProviderId),
+    name: buildUniqueCopyValue(baseName, hasProviderName),
+    apiType: source.apiType,
+    url: source.url,
+    endpoint: source.endpoint,
+    website: source.website || '',
+    apiKey: source.apiKey || '',
+    models: []
+  }
+
+  providers.splice(providerIndex + 1, 0, copiedProvider)
+  selectedModelKeys.clear()
+  visibleApiKeyProviders.clear()
+  saveConfigs()
+  renderConfigs()
+}
+
 function openModelModal(providerIndex, modelIndex = -1) {
   editingModelProviderIndex = providerIndex
   editingModelIndex = modelIndex
@@ -152,9 +311,9 @@ function openModelModal(providerIndex, modelIndex = -1) {
   const titleEl = document.getElementById('modelModalTitle')
   const probeResultEl = document.getElementById('modelProbeResult')
   const probeButtonEl = document.getElementById('probeModelButton')
-  renderInputHistories()
+  renderModelNamePresetOptions(providerIndex)
   if (probeResultEl) {
-    probeResultEl.textContent = '可自动探测 Context Window / Max Tokens'
+    probeResultEl.textContent = '尝试调用模型接口，自动探测 Context Window / Max Tokens'
     probeResultEl.style.color = '#999'
   }
   if (probeButtonEl) {
@@ -371,3 +530,19 @@ async function checkModel(providerIndex, modelIndex) {
     statusDiv.innerHTML = renderModelStatusHtml(providers[providerIndex].models[modelIndex])
   }
 }
+
+// 监听预设数据加载完成事件
+window.addEventListener('presets-ready', () => {
+  // 如果供应商模态框当前是打开的，重新渲染预设选项
+  const modal = document.getElementById('providerModal')
+  if (modal && modal.classList.contains('active')) {
+    renderProviderIdPresetOptions()
+    renderProviderUrlEndpointPresetOptions()
+    console.log('预设选项已更新')
+  }
+  const modelModal = document.getElementById('modelModal')
+  if (modelModal && modelModal.classList.contains('active') && editingModelProviderIndex >= 0) {
+    renderModelNamePresetOptions(editingModelProviderIndex)
+  }
+  console.log('预设数据已准备好，供应商数量:', window.PROVIDER_PRESETS?.length || 0)
+})
