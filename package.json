@@ -70,7 +70,7 @@
         "provider": "github",
         "owner": "jzj1993",
         "repo": "llm-model-manager",
-        "draft": false
+        "releaseType": "release"
       }
     ]
   }
