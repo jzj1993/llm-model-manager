@@ -26,6 +26,15 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;')
 }
 
+/** 单行化并折叠空白，用于 title 工具提示（避免换行破坏 innerHTML 里的属性解析） */
+function normalizeTooltipText(value) {
+  return String(value ?? '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\n/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 function maskApiKey(apiKey) {
   const raw = String(apiKey || '').trim()
   if (!raw) return '未填写'

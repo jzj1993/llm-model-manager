@@ -58,9 +58,9 @@ ipcMain.handle('load-configs', async () => {
 ipcMain.handle('save-configs', async (event, configs) => {
   try {
     const configPath = getConfigFilePath()
-    const payload = JSON.stringify(Array.isArray(configs) ? configs : [], null, 2)
+    const content = JSON.stringify(Array.isArray(configs) ? configs : [], null, 2)
     await fsPromises.mkdir(path.dirname(configPath), { recursive: true })
-    await fsPromises.writeFile(configPath, payload, 'utf-8')
+    await fsPromises.writeFile(configPath, content, 'utf-8')
     return { success: true }
   } catch (error) {
     return { success: false, message: error.message }
@@ -87,291 +87,64 @@ app.on('activate', () => {
   }
 })
 
-ipcMain.handle('check-model', async (event, config) => {
-  const { url, endpoint, modelName, apiKey, apiType } = config
-
+function headersObjectFromFetchHeaders(fetchHeaders) {
+  const out = {}
   try {
-    const fullUrl = `${url}${endpoint}`
-
-    const headers = {
-      'Content-Type': 'application/json'
-    }
-
-    let requestBody
-
-    if (apiType === 'anthropic') {
-      if (apiKey) {
-        headers['x-api-key'] = apiKey
-      }
-
-      requestBody = {
-        model: modelName,
-        messages: [
-          {
-            role: 'user',
-            content: 'Hello'
-          }
-        ],
-        max_tokens: 10
-      }
-    } else {
-      if (apiKey) {
-        headers['Authorization'] = `Bearer ${apiKey}`
-      }
-
-      requestBody = {
-        model: modelName,
-        messages: [
-          {
-            role: 'user',
-            content: 'Hello'
-          }
-        ],
-        max_tokens: 10
-      }
-    }
-
-    const response = await fetch(fullUrl, {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(requestBody)
+    fetchHeaders.forEach((value, key) => {
+      out[key] = value
     })
-
-    const data = await response.json()
-
-    if (response.ok) {
-      return {
-        success: true,
-        message: '模型可用',
-        details: data
-      }
-    } else {
-      return {
-        success: false,
-        message: `模型不可用: ${data.error?.message || response.statusText}`,
-        details: data
-      }
-    }
-  } catch (error) {
-    return {
-      success: false,
-      message: `请求失败: ${error.message}`,
-      details: null
-    }
-  }
-})
-
-function normalizeBaseUrl(url) {
-  return String(url || '').trim().replace(/\/+$/, '')
+  } catch (_) {}
+  return out
 }
 
-function inferReasoningMode(modelName) {
-  const text = String(modelName || '').toLowerCase()
-  if (!text) return null
-  const reasoningKeywords = ['reasoner', 'reasoning', 'r1', 'o1', 'o3', 'o4', 'thinking']
-  if (reasoningKeywords.some(key => text.includes(key))) return true
-  return null
-}
-
-function inferInputTypes(modelName) {
-  const text = String(modelName || '').toLowerCase()
-  if (!text) return null
-  const multimodalKeywords = ['vision', 'vl', 'omni', '4o', 'gemini', 'image']
-  if (multimodalKeywords.some(key => text.includes(key))) {
-    return ['text', 'image']
-  }
-  return ['text']
-}
-
-function extractCapabilityFromModelInfo(modelInfo) {
-  if (!modelInfo || typeof modelInfo !== 'object') return null
-  const contextWindow = modelInfo.context_window
-    ?? modelInfo.contextWindow
-    ?? modelInfo.input_token_limit
-    ?? modelInfo.max_context_length
-    ?? modelInfo.context_length
-    ?? null
-  const maxTokens = modelInfo.output_token_limit
-    ?? modelInfo.max_output_tokens
-    ?? modelInfo.max_completion_tokens
-    ?? modelInfo.max_tokens
-    ?? null
-
-  const normalizedContextWindow = Number.isFinite(Number(contextWindow)) ? Number(contextWindow) : null
-  const normalizedMaxTokens = Number.isFinite(Number(maxTokens)) ? Number(maxTokens) : null
-  if (!normalizedContextWindow && !normalizedMaxTokens) return null
-  return {
-    contextWindow: normalizedContextWindow,
-    maxTokens: normalizedMaxTokens
-  }
-}
-
-/** 单次 GET 模型列表尝试；responseBody 为完整响应原文，parsedJson 在解析成功时附带 */
-async function fetchModelInfoAttempt(candidateUrl, headers, modelName) {
-  const attempt = {
-    url: candidateUrl,
-    ok: false,
-    modelInfo: null,
-    status: null,
-    statusText: null,
-    responseBody: null,
-    parsedJson: null,
-    error: null
-  }
-  try {
-    const response = await fetch(candidateUrl, { method: 'GET', headers })
-    attempt.status = response.status
-    attempt.statusText = response.statusText
-    const text = await response.text()
-    attempt.responseBody = text
-    if (!response.ok) {
-      attempt.error = `HTTP ${response.status} ${(response.statusText || '').trim()}`.trim()
-      return attempt
-    }
-    let data
-    try {
-      data = JSON.parse(text)
-    } catch (parseErr) {
-      attempt.error = `响应不是合法 JSON: ${parseErr.message}`
-      return attempt
-    }
-    attempt.parsedJson = data
-    const list = Array.isArray(data?.data) ? data.data : []
-    if (list.length === 0) {
-      attempt.error = 'JSON 中 data 为空数组，未列出任何模型'
-      return attempt
-    }
-    const lowered = String(modelName || '').toLowerCase()
-    const matched = list.find(item => String(item?.id || '').toLowerCase() === lowered)
-      || list.find(item => String(item?.name || '').toLowerCase() === lowered)
-      || null
-    if (!matched) {
-      attempt.error = `在返回的 ${list.length} 个模型中未找到与「${modelName}」匹配的 id 或 name`
-      return attempt
-    }
-    attempt.ok = true
-    attempt.modelInfo = matched
-    return attempt
-  } catch (error) {
-    attempt.error = `请求异常: ${error.message}`
-    return attempt
-  }
-}
-
-ipcMain.handle('detect-model-capabilities', async (event, config) => {
-  const { url, apiKey, apiType, modelName } = config || {}
-  const normalizedBaseUrl = normalizeBaseUrl(url)
-  if (!normalizedBaseUrl) {
-    return {
-      success: false,
-      message: '供应商 URL 为空，无法探测',
-      capabilities: null,
-      probeDebug: { phase: 'validation', reason: 'empty_base_url' }
-    }
-  }
-  if (!modelName || !String(modelName).trim()) {
-    return {
-      success: false,
-      message: '模型 ID 为空，无法探测',
-      capabilities: null,
-      probeDebug: { phase: 'validation', reason: 'empty_model_name' }
-    }
-  }
-
-  const headers = { 'Content-Type': 'application/json' }
-  if (apiType === 'anthropic') {
-    if (apiKey) headers['x-api-key'] = apiKey
-    headers['anthropic-version'] = '2023-06-01'
-  } else if (apiKey) {
-    headers.Authorization = `Bearer ${apiKey}`
-  }
-
-  const candidateUrls = [
-    `${normalizedBaseUrl}/models`,
-    `${normalizedBaseUrl}/v1/models`
-  ]
-
-  const uniqueCandidateUrls = Array.from(new Set(candidateUrls))
-
-  const emptyCaps = {
-    contextWindow: null,
-    maxTokens: null,
-    reasoningMode: null,
-    inputTypes: null
-  }
+/** 渲染进程发起 GET/POST 等请求；不做业务解析 */
+ipcMain.handle('fetch-http', async (event, request) => {
+  let timer
+  const url = String(request?.url || '').trim()
+  const rawHeaders = request?.headers
+  const headers = rawHeaders && typeof rawHeaders === 'object' && !Array.isArray(rawHeaders)
+    ? { ...rawHeaders }
+    : { 'Content-Type': 'application/json' }
+  const method = String(request?.method || 'GET').toUpperCase()
+  const timeoutMs = Number.isFinite(request?.timeoutMs) ? Number(request.timeoutMs) : 30000
+  const rawBody = request?.body
+  const bodyString = rawBody != null && method !== 'GET' && method !== 'HEAD'
+    ? (typeof rawBody === 'string' ? rawBody : String(rawBody))
+    : null
 
   try {
-    const attempts = []
-    let modelInfo = null
-    for (const candidateUrl of uniqueCandidateUrls) {
-      const attempt = await fetchModelInfoAttempt(candidateUrl, headers, modelName)
-      attempts.push(attempt)
-      if (attempt.ok && attempt.modelInfo) {
-        modelInfo = attempt.modelInfo
-        break
-      }
+    if (!url) {
+      return { ok: false, error: 'URL 为空' }
     }
 
-    const probeMeta = {
-      baseUrl: normalizedBaseUrl,
-      modelName: String(modelName).trim(),
-      candidateUrls: uniqueCandidateUrls
+    const controller = new AbortController()
+    timer = setTimeout(() => controller.abort(), timeoutMs)
+    const requestInit = {
+      method,
+      headers,
+      signal: controller.signal
+    }
+    if (bodyString != null) {
+      requestInit.body = bodyString
     }
 
-    if (!modelInfo) {
-      return {
-        success: false,
-        message: '无法匹配模型或接口未返回有效列表（详见控制台完整响应）',
-        capabilities: emptyCaps,
-        probeDebug: {
-          ...probeMeta,
-          attempts
-        }
-      }
-    }
-
-    const capability = extractCapabilityFromModelInfo(modelInfo) || {}
-    const contextWindow = capability.contextWindow ?? null
-    const maxTokens = capability.maxTokens ?? null
-
-    if (!contextWindow && !maxTokens) {
-      return {
-        success: false,
-        message: '已匹配模型，但未解析到 Context / Max Tokens（详见控制台）',
-        capabilities: emptyCaps,
-        probeDebug: {
-          ...probeMeta,
-          attempts,
-          matchedModelInfo: modelInfo
-        }
-      }
-    }
+    const response = await fetch(url, requestInit)
+    clearTimeout(timer)
+    timer = undefined
+    const body = await response.text()
 
     return {
-      success: true,
-      message: '探测成功',
-      capabilities: {
-        contextWindow,
-        maxTokens,
-        reasoningMode: inferReasoningMode(modelName),
-        inputTypes: inferInputTypes(modelName)
-      },
-      probeDebug: {
-        ...probeMeta,
-        attempts,
-        matchedModelInfo: modelInfo
-      }
+      ok: true,
+      status: response.status,
+      statusText: response.statusText,
+      headers: headersObjectFromFetchHeaders(response.headers),
+      body
     }
   } catch (error) {
+    if (timer) clearTimeout(timer)
     return {
-      success: false,
-      message: `探测失败: ${error.message}`,
-      capabilities: null,
-      probeDebug: {
-        phase: 'exception',
-        message: error.message,
-        stack: error.stack ? String(error.stack) : null
-      }
+      ok: false,
+      error: error?.message || String(error)
     }
   }
 })

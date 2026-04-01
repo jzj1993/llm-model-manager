@@ -1,0 +1,123 @@
+/* 导出对话框 (#exportDialog)：格式列表、预览、Markdown 渲染区 */
+
+.export-dialog-content {
+  max-width: 1200px;
+  max-height: 96vh;
+  height: 92vh;
+  width: 92vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.export-dialog-content .dialog-header {
+  margin-bottom: 10px;
+}
+
+.export-dialog-content .form-group {
+  margin-bottom: 0;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.export-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+}
+
+.export-format-list {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 8px;
+  overflow: auto;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.export-format-item {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #334155;
+  font-size: 13px;
+  text-align: left;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.export-format-item.active {
+  border-color: #6366f1;
+  background: #eef2ff;
+  color: #312e81;
+  font-weight: 600;
+}
+
+.export-preview-panel {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  gap: 10px;
+}
+
+.export-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.export-entry-item {
+  padding: 0;
+}
+
+.export-entry-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.export-entry-code {
+  margin: 0;
+  overflow: visible;
+  background: #f8fafc;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  white-space: pre;
+}
+
+.export-entry-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.markdown-view {
+  overflow: visible;
+  color: #0f172a;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  padding: 14px;
+  font-size: 14px;
+  white-space: normal;
+  line-height: 1.6;
+}
+
+.export-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-bottom: 2px;
+}

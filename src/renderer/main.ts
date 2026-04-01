@@ -12,7 +12,8 @@ import rendererUtils from './utils.ts?raw'
 import rendererCombobox from './combobox.ts?raw'
 import rendererDataExport from './data-export.ts?raw'
 import rendererInteractions from './interactions.ts?raw'
-import rendererModals from './modals.ts?raw'
+import rendererModelProviderApi from './model-provider-api.ts?raw'
+import rendererDialogs from './dialogs.ts?raw'
 import rendererBootstrap from './render-bootstrap.ts?raw'
 
 const scripts = [
@@ -22,7 +23,8 @@ const scripts = [
   rendererCombobox,
   rendererDataExport,
   rendererInteractions,
-  rendererModals,
+  rendererModelProviderApi,
+  rendererDialogs,
   rendererBootstrap
 ]
 

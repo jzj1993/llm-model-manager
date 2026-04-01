@@ -20,7 +20,7 @@ function updateSelectionControls() {
   }
   if (checkBtn) {
     checkBtn.disabled = selectedCount === 0 || isCheckingSelectedModels
-    checkBtn.textContent = isCheckingSelectedModels ? '检查中...' : '检查选中模型'
+    checkBtn.textContent = isCheckingSelectedModels ? '测试中...' : '测试选中模型'
   }
 }
 
@@ -194,17 +194,72 @@ function getModelStatusState(model) {
   }
   return {
     statusClass: 'pending',
-    statusText: '未检查',
+    statusText: '未测试',
     detail: ''
   }
 }
 
-function renderModelStatusHtml(model) {
+function getModelCheckButtonLabel(model) {
   const state = getModelStatusState(model)
-  const detailHtml = state.detail
-    ? `<span class="status-info" title="查看详情">i<span class="status-tooltip">${escapeHtml(state.detail)}</span></span>`
-    : ''
-  return `<span class="status-text">${state.statusText}</span>${detailHtml}`
+  if (state.statusClass === 'pending') return '测试'
+  return state.statusText
+}
+
+function getModelCheckButtonTitle(model) {
+  const msg = normalizeTooltipText(model.lastMessage)
+  if (msg) return msg
+  const state = getModelStatusState(model)
+  if (state.statusClass === 'pending') return '点击测试模型是否可用'
+  if (state.statusClass === 'success') return '测试通过'
+  if (state.statusClass === 'error') return '测试失败'
+  return ''
+}
+
+const MODEL_CHECK_TRAIL_EMOJI = {
+  pending: '',
+  loading: '<span class="model-check-emoji model-check-emoji--loading" aria-hidden="true">🔄</span>',
+  error: ''
+}
+
+function renderModelCheckButtonInnerHtml(model) {
+  const label = getModelCheckButtonLabel(model)
+  const statusClass = getModelStatusState(model).statusClass
+  if (statusClass === 'success') {
+    return `<span class="model-check-inner"><span class="model-check-label">${escapeHtml(label)}</span></span>`
+  }
+  if (statusClass === 'error') {
+    return `<span class="model-check-inner"><span class="model-check-label">${escapeHtml(label)}</span><span class="model-check-trail-group"><span class="model-check-trail">${MODEL_CHECK_TRAIL_EMOJI.error}</span></span></span>`
+  }
+  const icon = MODEL_CHECK_TRAIL_EMOJI.pending
+  return `<span class="model-check-inner"><span class="model-check-label">${escapeHtml(label)}</span><span class="model-check-trail">${icon}</span></span>`
+}
+
+function renderModelCheckButtonCheckingInnerHtml() {
+  return `<span class="model-check-inner"><span class="model-check-label">测试中...</span><span class="model-check-trail">${MODEL_CHECK_TRAIL_EMOJI.loading}</span></span>`
+}
+
+/** 测试按钮 +（失败时）独立失败提示，气泡不在 button 内，纯 CSS :hover 即可且点击复制不会触发测试 */
+function getModelCheckVariantClass(statusClass) {
+  if (statusClass === 'pending') return 'button-light-primary'
+  if (statusClass === 'success') return 'button-light-success'
+  if (statusClass === 'error') return 'button-light-fail'
+  return 'button-light-primary'
+}
+
+function renderModelCheckClusterHtml(providerIndex, modelIndex, model) {
+  const statusClass = getModelStatusState(model).statusClass
+  const inner = renderModelCheckButtonInnerHtml(model)
+  const variant = getModelCheckVariantClass(statusClass)
+  const btn = `<button type="button" class="button model-check-button ${variant}" onclick="checkModel(${providerIndex}, ${modelIndex})">${inner}</button>`
+  if (statusClass === 'error') {
+    const detailTip = escapeHtml(getModelCheckButtonTitle(model))
+    return `<div class="model-check-cluster model-check-cluster--error"><span class="model-check-fail-hint" tabindex="0" aria-label="失败详情"><span class="model-check-fail-hint-icon" aria-hidden="true">i</span><span class="model-check-tooltip-bubble model-check-tooltip-bubble--fail" role="tooltip">${detailTip}</span></span>${btn}</div>`
+  }
+  return `<div class="model-check-cluster">${btn}</div>`
+}
+
+function renderModelCheckClusterCheckingHtml(providerIndex, modelIndex) {
+  return `<div class="model-check-cluster"><button type="button" class="button model-check-button model-check--checking" disabled onclick="checkModel(${providerIndex}, ${modelIndex})">${renderModelCheckButtonCheckingInnerHtml()}</button></div>`
 }
 
 async function checkSelectedItems() {

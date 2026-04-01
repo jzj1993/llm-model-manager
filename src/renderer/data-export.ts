@@ -141,7 +141,7 @@ function importJsonConfigs() {
         const normalizedIncomingProviders = normalizeProviders(incomingProviders)
         if (providers.length > 0 && normalizedIncomingProviders.length > 0) {
           pendingImportedProviders = normalizedIncomingProviders
-          openImportConflictModal()
+          openImportConflictDialog()
           return
         }
         applyImportedProviders(normalizedIncomingProviders, 'overwrite')
@@ -193,30 +193,30 @@ function applyImportedProviders(incomingProviders, mode) {
   alert(`导入成功，共 ${providers.length} 个供应商`)
 }
 
-function openImportConflictModal() {
-  const modal = document.getElementById('importConflictModal')
-  if (!modal) return
-  modal.classList.add('active')
+function openImportConflictDialog() {
+  const dialog = document.getElementById('importConflictDialog')
+  if (!dialog) return
+  dialog.classList.add('active')
 }
 
-function closeImportConflictModal() {
-  const modal = document.getElementById('importConflictModal')
-  if (!modal) return
-  modal.classList.remove('active')
+function closeImportConflictDialog() {
+  const dialog = document.getElementById('importConflictDialog')
+  if (!dialog) return
+  dialog.classList.remove('active')
 }
 
 function importJsonOverwrite() {
   if (!Array.isArray(pendingImportedProviders)) return
   applyImportedProviders(pendingImportedProviders, 'overwrite')
   pendingImportedProviders = null
-  closeImportConflictModal()
+  closeImportConflictDialog()
 }
 
 function importJsonMerge() {
   if (!Array.isArray(pendingImportedProviders)) return
   applyImportedProviders(pendingImportedProviders, 'merge')
   pendingImportedProviders = null
-  closeImportConflictModal()
+  closeImportConflictDialog()
 }
 
 function renderProviderUrlEndpointPresetOptions() {
@@ -447,7 +447,7 @@ async function renderExportPreview(exporterId) {
   const runButtonEl = document.getElementById('runExportActionButton')
   const copyButtonEl = document.getElementById('copyExportContentButton')
 
-  const exportResult = exporter.export(exportModalConfigs)
+  const exportResult = exporter.export(exportDialogConfigs)
   const sourceEntries = Array.isArray(exportResult)
     ? exportResult
     : [{
@@ -457,8 +457,8 @@ async function renderExportPreview(exporterId) {
     }]
 
   exportEntryItems = sourceEntries.map((entry, index) => {
-    const providerName = exportModalConfigs[index]?.provider?.name || exportModalConfigs[index]?.provider?.id || 'Provider'
-    const modelName = exportModalConfigs[index]?.model?.name || exportModalConfigs[index]?.model?.id || 'Model'
+    const providerName = exportDialogConfigs[index]?.provider?.name || exportDialogConfigs[index]?.provider?.id || 'Provider'
+    const modelName = exportDialogConfigs[index]?.model?.name || exportDialogConfigs[index]?.model?.id || 'Model'
     const title = entry?.title || `#${index + 1} ${providerName} / ${modelName}`
     const rawContent = String(entry?.content || '')
     const type = entry?.type || null
@@ -485,8 +485,8 @@ async function renderExportPreview(exporterId) {
       `<div class="export-entry-title">${escapeHtml(entry.title || `#${index + 1}`)}</div>`,
       bodyHtml,
       '<div class="export-entry-actions">',
-      `<button class="button" onclick="copyExportEntry(${index})">复制</button>`,
-      isRunnableType(entry.type) ? `<button class="button button-success" onclick="runExportEntry(${index})">${getActionButtonText(entry.type)}</button>` : '',
+      `<button class="button button-third" onclick="copyExportEntry(${index})">复制</button>`,
+      isRunnableType(entry.type) ? `<button class="button button-secondary" onclick="runExportEntry(${index})">${getActionButtonText(entry.type)}</button>` : '',
       '</div>',
       '</div>'
     ].join('')
@@ -495,31 +495,31 @@ async function renderExportPreview(exporterId) {
   if (copyButtonEl) copyButtonEl.style.display = 'none'
   if (runButtonEl) runButtonEl.style.display = 'none'
 
-  titleEl.textContent = `导出到 ${exporter.displayName} (${exportModalConfigs.length} 项)`
+  titleEl.textContent = `导出到 ${exporter.displayName} (${exportDialogConfigs.length} 项)`
 
   formatListEl.innerHTML = exporters
     .map(item => `<button class="export-format-item ${item.id === exporterId ? 'active' : ''}" onclick="selectExportFormat('${escapeHtml(item.id)}')">${escapeHtml(item.displayName)}</button>`)
     .join('')
 }
 
-function openExportModal(selectedConfigs) {
-  const modal = document.getElementById('exportModal')
-  exportModalConfigs = selectedConfigs
+function openExportDialog(selectedConfigs) {
+  const dialog = document.getElementById('exportDialog')
+  exportDialogConfigs = selectedConfigs
   if (!exporters || exporters.length === 0) {
     alert('未找到导出器')
     return
   }
   void renderExportPreview(exporters[0].id)
-  modal.classList.add('active')
+  dialog.classList.add('active')
 }
 
 function selectExportFormat(exporterId) {
   void renderExportPreview(exporterId)
 }
 
-function closeExportModal() {
-  const modal = document.getElementById('exportModal')
-  modal.classList.remove('active')
+function closeExportDialog() {
+  const dialog = document.getElementById('exportDialog')
+  dialog.classList.remove('active')
   exportEntryItems = []
 }
 
@@ -535,7 +535,7 @@ function exportSelectedItems() {
     alert('请先选择至少一个模型')
     return
   }
-  openExportModal(selectedConfigs)
+  openExportDialog(selectedConfigs)
 }
 
 async function runExportAction() {

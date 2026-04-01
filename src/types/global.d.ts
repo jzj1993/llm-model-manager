@@ -53,8 +53,16 @@ interface Window {
   electronAPI: {
     loadConfigs(): Promise<any[]>
     saveConfigs(configs: any[]): Promise<{ success: boolean; message?: string }>
-    checkModel(config: any): Promise<any>
-    detectModelCapabilities(config: any): Promise<any>
+    fetchHttp(request: {
+      url: string
+      headers?: Record<string, string>
+      method?: string
+      body?: string
+      timeoutMs?: number
+    }): Promise<
+      | { ok: true; status: number; statusText: string; body: string; headers?: Record<string, string> }
+      | { ok: false; error: string }
+    >
     openExternal(target: string): Promise<boolean>
     runCommandInTerminal(command: string): Promise<{ success: boolean; message?: string }>
     openHTMLWithScript(script: string): Promise<{ success: boolean; message?: string }>

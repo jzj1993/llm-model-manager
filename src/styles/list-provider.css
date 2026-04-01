@@ -1,0 +1,173 @@
+/* 主列表：供应商卡片、供应商工具栏、元信息网格、官网链接 */
+
+.provider-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.provider-item {
+  background: #ffffff;
+  border: 1px solid #d1d9e0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.provider-display-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.provider-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.provider-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.provider-top {
+  min-height: 40px;
+}
+
+.provider-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 40px;
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.provider-actions {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+  align-items: stretch;
+  justify-content: flex-end;
+}
+
+.provider-actions .drag-handle {
+  margin-left: 0;
+}
+
+.provider-meta-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 6px 16px;
+  margin-top: 8px;
+  margin-left: 50px;
+  padding-top: 10px;
+  border-top: 1px solid #e8ecf0;
+  align-items: center;
+}
+
+@media (max-width: 720px) {
+  .provider-meta-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.provider-meta-grid .provider-row {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* 与 model-params 一致的字重与层次；正文略深于模型行便于扫读 */
+.provider-meta-grid .meta-label {
+  flex-shrink: 0;
+  font-weight: 500;
+  color: #8b96a5;
+  margin-right: 0;
+}
+
+.provider-meta-grid .meta-value,
+.provider-meta-grid .provider-meta-value-truncate {
+  color: #4f5c6b;
+}
+
+.provider-meta-grid .provider-website-link {
+  font-size: 12px;
+  color: #4a678a;
+}
+
+.provider-meta-grid .provider-website-link:hover {
+  color: #3d5670;
+}
+
+.provider-meta-value-truncate {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.provider-meta-value-truncate .provider-website-link {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+.provider-meta-key-with-eye {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+/* 密钥不 flex 伸展，避免把眼睛顶到整列最右侧；仅在过长时收缩并省略号 */
+.provider-meta-key-with-eye .provider-meta-value-truncate {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.provider-meta-key-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #4f5c6b;
+}
+
+.provider-meta-key-with-eye .api-key-eye-inline {
+  margin-left: 0;
+  flex-shrink: 0;
+  color: #6b7f90;
+}
+
+.provider-meta-key-with-eye .api-key-eye-inline:hover {
+  color: #4f5c6b;
+}
+
+.provider-website-link {
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: 12px;
+}
+
+.provider-website-link:hover {
+  color: #1d4ed8;
+}

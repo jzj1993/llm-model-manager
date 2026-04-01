@@ -1,0 +1,161 @@
+/* 从远端拉取模型列表对话框 (#modelListDialog) */
+
+.model-list-dialog-content {
+  max-width: 700px;
+}
+
+.model-list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.model-list-toolbar .toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.model-list-toolbar .toolbar-left span {
+  font-size: 14px;
+  color: #555;
+}
+
+.model-list-toolbar .toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.model-list-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.model-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  background: white;
+  border: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.model-list-item:hover {
+  background: #f8f9fa;
+  border-color: #d0d0d0;
+}
+
+.model-list-item:last-child {
+  margin-bottom: 0;
+}
+
+.model-list-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.model-list-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.model-list-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.model-list-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #5a5a5a;
+}
+
+.model-list-detail-pair {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.model-list-detail-k {
+  color: #909090;
+  font-size: 10px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.model-list-detail-v {
+  font-size: 11px;
+  color: #4b5563;
+  word-break: break-word;
+}
+
+.model-list-exists {
+  display: inline-block;
+  font-size: 10px;
+  color: #059669;
+  background: #ecfdf5;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.model-list-checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.model-list-status {
+  padding: 20px 14px;
+}
+
+.model-list-status-loading {
+  text-align: center;
+}
+
+.model-list-status-loading .model-list-status-text {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.model-list-status-error {
+  text-align: left;
+}
+
+.model-list-status-title {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #b91c1c;
+  margin-bottom: 8px;
+}
+
+.model-list-error-message {
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.55;
+  margin: 0 0 14px 0;
+  word-break: break-word;
+}
+
+#addModelListFromListButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

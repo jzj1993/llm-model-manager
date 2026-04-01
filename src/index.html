@@ -10,7 +10,6 @@
 <body>
   <div class="container">
     <div class="top-fixed">
-      <h1>LLM模型API管理器</h1>
       <div class="section-title">配置列表</div>
       <div class="list-toolbar">
         <div class="toolbar-left">
@@ -19,8 +18,8 @@
           <span id="selectedCount">已选 0 项</span>
         </div>
         <div class="toolbar-right">
-          <button id="checkSelectedButton" class="button button-success" onclick="checkSelectedItems()" disabled>检查选中模型</button>
-          <button id="exportSelectedButton" class="button" onclick="exportSelectedItems()" disabled>导出选中模型</button>
+          <button id="checkSelectedButton" class="button button-secondary" onclick="checkSelectedItems()" disabled>测试选中模型</button>
+          <button id="exportSelectedButton" class="button button-primary" onclick="exportSelectedItems()" disabled>导出选中模型</button>
         </div>
       </div>
     </div>
@@ -32,19 +31,19 @@
     </div>
 
     <div class="bottom-fixed">
-      <button class="button" onclick="openProviderModal()">+ 添加供应商</button>
+      <button class="button button-primary" onclick="openProviderDialog()">+ 添加供应商</button>
       <div class="bottom-actions-right">
-        <button class="button button-secondary" onclick="importJsonConfigs()">导入 JSON 配置</button>
-        <button class="button button-secondary" onclick="exportJsonConfigs()">导出 JSON 配置</button>
+        <button class="button button-third" onclick="importJsonConfigs()">导入 JSON 配置</button>
+        <button class="button button-third" onclick="exportJsonConfigs()">导出 JSON 配置</button>
       </div>
     </div>
   </div>
 
-  <div class="modal" id="providerModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title" id="providerModalTitle">添加供应商</div>
-        <button class="close-button" onclick="closeProviderModal()">&times;</button>
+  <div class="dialog" id="providerDialog">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <div class="dialog-title" id="providerDialogTitle">添加供应商</div>
+        <button class="close-button" onclick="closeProviderDialog()">&times;</button>
       </div>
 
       <div class="form-group">
@@ -101,7 +100,7 @@
             type="button"
             id="toggleApiKeyButton"
             class="api-key-eye"
-            onclick="toggleProviderModalApiKeyVisibility()"
+            onclick="toggleProviderDialogApiKeyVisibility()"
             aria-label="显示或隐藏 API Key"
             title="显示或隐藏 API Key"
           >
@@ -120,18 +119,18 @@
         </div>
       </div>
 
-      <div class="modal-footer">
-        <button class="button button-secondary" onclick="closeProviderModal()">取消</button>
-        <button class="button" onclick="saveProvider()">保存供应商</button>
+      <div class="dialog-footer">
+        <button class="button button-third" onclick="closeProviderDialog()">取消</button>
+        <button class="button button-primary" onclick="saveProvider()">保存供应商</button>
       </div>
     </div>
   </div>
 
-  <div class="modal" id="modelModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title" id="modelModalTitle">添加模型</div>
-        <button class="close-button" onclick="closeModelModal()">&times;</button>
+  <div class="dialog" id="modelDialog">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <div class="dialog-title" id="modelDialogTitle">添加模型</div>
+        <button class="close-button" onclick="closeModelDialog()">&times;</button>
       </div>
 
       <div class="form-group">
@@ -178,23 +177,53 @@
         </div>
 
         <div class="model-probe-row">
-          <button id="probeModelButton" class="button button-secondary" onclick="probeModelCapabilities()">探测模型参数</button>
+          <button id="probeModelButton" class="button button-third" onclick="probeModelCapabilities()">探测模型参数</button>
           <span id="modelProbeResult" class="model-probe-result">尝试调用接口，自动探测 Context Window / Max Tokens</span>
         </div>
       </div>
 
-      <div class="modal-footer">
-        <button class="button button-secondary" onclick="closeModelModal()">取消</button>
-        <button class="button" onclick="saveModel()">保存模型</button>
+      <div class="dialog-footer">
+        <button class="button button-third" onclick="closeModelDialog()">取消</button>
+        <button class="button button-primary" onclick="saveModel()">保存模型</button>
       </div>
     </div>
   </div>
 
-  <div class="modal" id="exportModal">
-    <div class="modal-content export-modal-content">
-      <div class="modal-header">
-        <div class="modal-title" id="exportTitle">导出</div>
-        <button class="close-button" onclick="closeExportModal()">&times;</button>
+  <div class="dialog" id="modelListDialog">
+    <div class="dialog-content model-list-dialog-content">
+      <div class="dialog-header">
+        <div class="dialog-title" id="modelListDialogTitle">模型列表</div>
+        <button class="close-button" onclick="closeModelListDialog()">&times;</button>
+      </div>
+
+      <div class="form-group" id="modelListDialogToolbarWrap">
+        <div class="model-list-toolbar">
+          <div class="toolbar-left">
+            <input id="selectAllModelList" class="row-checkbox" type="checkbox" onchange="toggleSelectAllModelList(this.checked)">
+            <span>全选</span>
+            <span id="modelListSelectedCount">已选 0 项</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div id="modelListDialogList" class="model-list-container">
+          <div class="empty-state">正在加载模型列表...</div>
+        </div>
+      </div>
+
+      <div class="dialog-footer">
+        <button class="button button-third" onclick="closeModelListDialog()">取消</button>
+        <button type="button" id="addModelListFromListButton" class="button button-primary" onclick="addSelectedModelsFromList()">添加选中模型</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog" id="exportDialog">
+    <div class="dialog-content export-dialog-content">
+      <div class="dialog-header">
+        <div class="dialog-title" id="exportTitle">导出</div>
+        <button class="close-button" onclick="closeExportDialog()">&times;</button>
       </div>
 
       <div class="form-group">
@@ -204,8 +233,8 @@
             <div id="exportEntries" class="export-entries" style="display:none;"></div>
             <pre id="exportCode" class="code-viewer"></pre>
             <div class="export-footer-actions">
-              <button id="copyExportContentButton" class="button" onclick="copyExportContent()">复制内容</button>
-              <button id="runExportActionButton" class="button button-success" onclick="runExportAction()" style="display:none;"></button>
+              <button id="copyExportContentButton" class="button button-third" onclick="copyExportContent()">复制内容</button>
+              <button id="runExportActionButton" class="button button-secondary" onclick="runExportAction()" style="display:none;"></button>
             </div>
           </div>
         </div>
@@ -213,20 +242,20 @@
     </div>
   </div>
 
-  <div class="modal" id="importConflictModal">
-    <div class="modal-content import-conflict-modal-content">
-      <div class="modal-header">
-        <div class="modal-title">检测到配置冲突</div>
-        <button class="close-button" onclick="closeImportConflictModal()">&times;</button>
+  <div class="dialog" id="importConflictDialog">
+    <div class="dialog-content import-conflict-dialog-content">
+      <div class="dialog-header">
+        <div class="dialog-title">检测到配置冲突</div>
+        <button class="close-button" onclick="closeImportConflictDialog()">&times;</button>
       </div>
       <div class="form-group">
         <div>当前已有配置，且导入文件中也包含配置。</div>
         <div class="hint">请选择导入方式：合并（同 ID 以导入为准）或覆盖（使用导入配置替换当前全部配置）。</div>
       </div>
-      <div class="modal-footer">
-        <button class="button button-secondary" onclick="closeImportConflictModal()">取消</button>
-        <button class="button button-secondary" onclick="importJsonMerge()">合并导入</button>
-        <button class="button" onclick="importJsonOverwrite()">覆盖导入</button>
+      <div class="dialog-footer">
+        <button class="button button-third" onclick="closeImportConflictDialog()">取消</button>
+        <button class="button button-third" onclick="importJsonMerge()">合并导入</button>
+        <button class="button button-primary" onclick="importJsonOverwrite()">覆盖导入</button>
       </div>
     </div>
   </div>

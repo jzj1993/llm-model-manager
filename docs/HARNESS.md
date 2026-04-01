@@ -91,7 +91,7 @@ npx harness-electron type --css "#modelName" --value "gpt-3.5-turbo"
 npx harness-electron evaluate --script 'document.querySelectorAll(".button").forEach(btn => { if (btn.textContent.includes("保存")) btn.click() })'
 
 # 7) 触发检查
-npx harness-electron evaluate --script 'document.querySelectorAll(".button-success").forEach(btn => btn.click())'
+npx harness-electron evaluate --script 'document.getElementById("checkSelectedButton")?.click()'
 
 # 8) 等待结果
 sleep 3
