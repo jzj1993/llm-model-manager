@@ -32,7 +32,36 @@
 
 ![](assets/20260401_162225_image.png)
 
-## 快速开始
+## 下载安装包
+
+直接使用应用，可前往 [GitHub Releases](https://github.com/jzj1993/llm-model-manager/releases) 下载对应平台安装包。
+
+## 使用流程
+
+1. 点击 `+ 添加供应商`，填写 `供应商 ID`、`Base URL`、`Endpoint`（可选 API Key / 官网）。
+2. 在供应商下添加模型（可使用模型预设自动填充参数）。
+3. 对单个模型点击 `检查`，或在顶部勾选后点击 `检查选中模型`。
+4. 需要导出时，勾选模型并点击 `导出选中模型`，选择目标格式后复制或执行。
+
+## 导出目标（当前内置）
+
+- OpenClaw（手动 / 命令行）
+- CC Switch（命令行 / Deep Link）
+- Claude Code（命令行）
+- Codex（命令行）
+- Cherry Studio（Deep Link）
+- AionUI（Deep Link）
+- OpenCat（Deep Link）
+- AMA 问天（Deep Link）
+
+## 数据与安全
+
+- 配置数据保存在本地 `localStorage`
+- 存储键：`modelCheckerProviders`
+- API Key 仅用于本地请求与导出内容生成，不会主动上传到第三方服务
+- 执行“命令行导出动作”前请先备份目标配置文件，避免误覆盖
+
+## 本地开发
 
 ### 前置要求
 
@@ -57,45 +86,11 @@ npm start
 npm run dev
 ```
 
-## 使用流程
-
-1. 点击 `+ 添加供应商`，填写 `供应商 ID`、`Base URL`、`Endpoint`（可选 API Key / 官网）。
-2. 在供应商下添加模型（可使用模型预设自动填充参数）。
-3. 对单个模型点击 `检查`，或在顶部勾选后点击 `检查选中模型`。
-4. 需要导出时，勾选模型并点击 `导出选中模型`，选择目标格式后复制或执行。
-
-## 默认接口值
-
-- OpenAI 兼容接口
-  - Base URL: `https://api.openai.com/v1`
-  - Endpoint: `/chat/completions`
-- Anthropic 接口
-  - Base URL: `https://api.anthropic.com`
-  - Endpoint: `/v1/messages`
-
-## 导出目标（当前内置）
-
-- OpenClaw（手动 / 命令行）
-- CC Switch（命令行 / Deep Link）
-- Claude Code（命令行）
-- Codex（命令行）
-- Cherry Studio（Deep Link）
-- AionUI（Deep Link）
-- OpenCat（Deep Link）
-- AMA 问天（Deep Link）
-
-## 数据与安全
-
-- 配置数据保存在本地 `localStorage`
-- 存储键：`modelCheckerProviders`
-- API Key 仅用于本地请求与导出内容生成，不会主动上传到第三方服务
-- 执行“命令行导出动作”前请先备份目标配置文件，避免误覆盖
-
-## 额外文档
+### Harness 自动化测试
 
 - Harness 自动化测试说明：`HARNESS.md`
 
-## 发布桌面安装包（GitHub Release）
+### 发布桌面安装包（GitHub Release）
 
 已配置 `electron-builder` 与 GitHub Actions 工作流：
 
