@@ -16,11 +16,11 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            command: npx electron-builder --mac dmg zip --publish always
+            command: npm run build && npx electron-builder --mac dmg zip --publish always
           - os: windows-latest
-            command: npx electron-builder --win nsis portable --publish always
+            command: npm run build && npx electron-builder --win nsis portable --publish always
           - os: ubuntu-latest
-            command: npx electron-builder --linux AppImage tar.gz --publish always
+            command: npm run build && npx electron-builder --linux AppImage tar.gz --publish always
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout

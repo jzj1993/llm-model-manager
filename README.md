@@ -101,12 +101,15 @@ npm run dev
 
 ### 发布桌面安装包（GitHub Release）
 
-已配置 `electron-builder` 与 GitHub Actions 工作流：
+已配置 `electron-vite` + `electron-builder` + GitHub Actions 工作流：
 
 - 工作流文件：`.github/workflows/release.yml`
 - 触发方式：
   - 推送标签（如 `v1.1.0`）自动构建并发布到对应 GitHub Release
   - 手动触发工作流（`workflow_dispatch`）
+- 构建顺序（迁移到 `electron-vite` 后）：
+  - 先执行 `npm run build` 生成 `dist`
+  - 再执行 `electron-builder` 打包并上传 Release 资产
 - 目标平台：
   - macOS：`dmg`、`zip`
   - Windows：`nsis`、`portable`
@@ -120,6 +123,14 @@ npm run dist:mac
 npm run dist:win
 npm run dist:linux
 ```
+
+发布前建议检查：
+
+```bash
+npm run build
+```
+
+若本地构建通过，再推送版本标签（例如 `v1.1.1`）触发自动发版。
 
 ## 许可证
 
