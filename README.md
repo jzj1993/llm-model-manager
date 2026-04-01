@@ -96,8 +96,8 @@ npm run dev
 
 ### 文档
 
-- Harness 自动化测试说明：`docs/HARNESS.md`
-- 详细产品文档：`docs/product-logic.md`
+- Harness 自动化测试说明：[docs/HARNESS.md](docs/HARNESS.md)
+- 详细产品文档：[docs/product-logic.md](docs/product-logic.md)
 
 ### 发布桌面安装包（GitHub Release）
 
