@@ -1,10 +1,14 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import { IPC_CHANNELS, type ElectronAPI, type FetchHttpRequest } from './shared/ipc'
+import type { ProviderConfig } from './shared/types'
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  loadConfigs: () => ipcRenderer.invoke('load-configs'),
-  saveConfigs: (configs) => ipcRenderer.invoke('save-configs', configs),
-  fetchHttp: (request) => ipcRenderer.invoke('fetch-http', request),
-  openExternal: (target) => ipcRenderer.invoke('open-external', target),
-  runCommandInTerminal: (command) => ipcRenderer.invoke('run-command-in-terminal', command),
-  openHTMLWithScript: (script) => ipcRenderer.invoke('open-html-with-script', script)
-})
+const electronAPI: ElectronAPI = {
+  loadConfigs: () => ipcRenderer.invoke(IPC_CHANNELS.loadConfigs),
+  saveConfigs: (configs: ProviderConfig[]) => ipcRenderer.invoke(IPC_CHANNELS.saveConfigs, configs),
+  fetchHttp: (request: FetchHttpRequest) => ipcRenderer.invoke(IPC_CHANNELS.fetchHttp, request),
+  openExternal: (target: string) => ipcRenderer.invoke(IPC_CHANNELS.openExternal, target),
+  runCommandInTerminal: (command: string) => ipcRenderer.invoke(IPC_CHANNELS.runCommandInTerminal, command),
+  openHTMLWithScript: (script: string) => ipcRenderer.invoke(IPC_CHANNELS.openHTMLWithScript, script)
+}
+
+contextBridge.exposeInMainWorld('electronAPI', electronAPI)

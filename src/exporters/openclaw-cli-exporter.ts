@@ -57,11 +57,12 @@ export class OpenClawCliExporter extends BaseExporter {
   }
 
   resolveModelOptions(config) {
+    const p = config.model.params || {}
     return {
-      contextWindow: Number.isFinite(config.model.contextWindow) ? config.model.contextWindow : null,
-      maxTokens: Number.isFinite(config.model.maxTokens) ? config.model.maxTokens : null,
-      reasoning: typeof config.model.reasoningMode === 'boolean' ? config.model.reasoningMode : null,
-      input: Array.isArray(config.model.inputTypes) && config.model.inputTypes.length > 0 ? config.model.inputTypes : null
+      contextWindow: Number.isFinite(p.contextWindow) ? p.contextWindow : null,
+      maxTokens: Number.isFinite(p.maxTokens) ? p.maxTokens : null,
+      reasoning: typeof p.reasoningMode === 'boolean' ? p.reasoningMode : null,
+      input: Array.isArray(p.inputTypes) && p.inputTypes.length > 0 ? p.inputTypes : null
     }
   }
 

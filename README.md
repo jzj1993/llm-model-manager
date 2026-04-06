@@ -1,15 +1,16 @@
 # LLM 模型 API 管理器
 
-一个用于管理 Provider / Model 配置、测试模型可用性并导出到多种工具的 Electron 桌面应用。当前支持 OpenAI 兼容接口与 Anthropic 接口。
+Electron 桌面应用，用于集中管理 LLM 供应商与模型配置：支持 OpenAI 兼容与 Anthropic 两类接口，可测试连通性、探测模型参数，并将选中模型导出到多种常用 AI 客户端。配置保存在本机，可离线使用。
 
 ## 主要功能
 
-- 管理多个供应商和模型（新增、编辑、删除、复制、排序）
-- 支持模型可用性测试（单模型与批量）
-- 支持模型参数探测（如 Context Window、Max Tokens）
-- 支持一键导出到多个常用 AI 工具
-- 支持导入/导出 JSON 配置，便于备份和迁移
-- 本地保存配置，离线可用
+- 多供应商、多模型管理：新增、编辑、删除、复制、折叠/展开、拖拽排序
+- 模型测试：单模型测试与批量「测试选中模型」
+- 模型参数：支持记录与探测 Context Window、Max Tokens 等（见 `ModelParams`）
+- 从远端拉取模型列表（按供应商配置请求，结果在弹窗中展示与选用）
+- 导出：勾选模型后导出为多种目标格式（环境变量、命令行、Deep Link、Markdown 等），导出内容支持语法高亮预览
+- 配置备份与迁移：右下角「导出 JSON」「导入 JSON」
+- 本地持久化：配置写入 Electron `userData` 目录下的 `configs.json`
 
 ![](assets/20260402_035320_image.png)
 
@@ -17,26 +18,26 @@
 
 ## 下载安装包
 
-直接使用应用，可前往 [GitHub Releases](https://github.com/jzj1993/llm-model-manager/releases) 下载对应平台安装包。
+前往 [GitHub Releases](https://github.com/jzj1993/llm-model-manager/releases) 下载对应平台安装包。
 
 ## 使用流程
 
-1. 点击 `+ 添加供应商`，填写 `供应商 ID`、`Base URL`、`Endpoint`（可选 API Key / 官网）。
-2. 在供应商下添加模型（可使用模型预设自动填充参数）。
-3. 对单个模型点击 `测试`（未测试时），或在顶部勾选后点击 `测试选中模型`。
-4. 需要导出时，勾选模型并点击 `导出选中模型`，选择目标格式后复制或执行。
-5. 需要跨设备/备份配置时，使用右下角 `导出 JSON 配置`。
-6. 导入配置时点击右下角 `导入 JSON 配置`。
+1. 点击 **添加供应商**，填写供应商标识、Base URL、Endpoint，按需填写 API Key、官网；接口类型在 OpenAI 兼容与 Anthropic 之间选择。
+2. 在供应商下添加模型，可使用预设快速填充。
+3. 对单个模型执行测试，或在顶部勾选后点击 **测试选中模型**。
+4. 需要导出到其他工具时，勾选模型后点击 **导出选中模型**，选择目标格式后复制内容，或按提示在终端/浏览器中执行。
+5. 备份或迁移配置：使用 **导出 JSON** / **导入 JSON**。
+6. 列表较长时可用 **折叠全部** / **展开全部**；用 **全选** 快速选中全部模型。
 
 ## JSON 导入冲突处理
 
-当“当前已有配置”且“导入文件也包含配置”时，应用会弹出选择框：
+当当前已有配置且导入文件也包含配置时，应用会提示：
 
-- `合并导入`：按 `provider.id` 合并；同一 Provider 内按 `model.id` 合并（同 ID 以导入内容为准）
-- `覆盖导入`：使用导入文件替换当前全部配置
-- `取消`：不执行本次导入
+- **合并导入**：按 `provider.id` 合并；同一 Provider 内按 `model.id` 合并（同 ID 以导入内容为准）
+- **覆盖导入**：用导入文件替换当前全部配置
+- **取消**：不执行本次导入
 
-## 支持导出的App
+## 支持导出的应用 / 形式
 
 - OpenClaw（手动 / 命令行）
 - CC Switch（Deep Link）
@@ -48,20 +49,28 @@
 
 ## 数据与安全
 
-- 配置数据保存在本地配置文件（Electron `userData` 目录）
-- 默认文件名：`configs.json`
-- API Key 仅用于本地请求与导出内容生成，不会主动上传到第三方服务
-- 执行“命令行导出动作”前请先备份目标配置文件，避免误覆盖
+- 配置保存在本地（`userData` 下的 `configs.json`）
+- API Key 仅用于本机发起的请求与生成导出内容，应用不会将密钥主动上传到第三方服务
+- 执行命令行类导出前请自行备份目标配置文件，避免误覆盖
 
 ## 说明
 
-本项目代码使用 AI 辅助完成，未经过严格完整测试。如发现功能遗漏、兼容性问题或其他错误，欢迎提交 [Issue](../../issues) 或 [PR](../../pulls)。
+本项目在开发过程中使用 AI 辅助编写，未经过完整回归测试。若发现问题，欢迎提交 [Issue](https://github.com/jzj1993/llm-model-manager/issues) 或 [PR](https://github.com/jzj1993/llm-model-manager/pulls)。
 
 ## 本地开发
 
+### 技术栈
+
+- **运行时：** Electron（主进程 + 预加载脚本）
+- **构建：** [electron-vite](https://electron-vite.org/)，输出至 `dist/`
+- **界面：** React 19、TypeScript、Tailwind CSS
+- **组件：** Radix UI 对话框 / 气泡 / 提示等，配合 `class-variance-authority`、`tailwind-merge`
+- **交互：** `@dnd-kit` 实现供应商与模型的拖拽排序
+- **主进程能力：** 通过 IPC 读写配置、HTTP 探测、打开外链、在终端执行命令、在浏览器中执行脚本等（通道定义见 `src/shared/ipc.ts`）
+
 ### 前置要求
 
-- Node.js >= 20
+- Node.js ≥ 20
 - npm
 
 ### 安装
@@ -76,7 +85,9 @@ npm install
 npm start
 ```
 
-### 开发模式（自动重载）
+（预览构建产物，开发前需先 `npm run build`。）
+
+### 开发模式（热重载）
 
 ```bash
 npm run dev
@@ -84,26 +95,18 @@ npm run dev
 
 ### 文档
 
-- Harness 自动化测试说明：[docs/HARNESS.md](docs/HARNESS.md)
-- 详细产品文档：[docs/product-logic.md](docs/product-logic.md)
+- Harness 自动化测试：[docs/HARNESS.md](docs/HARNESS.md)
 
 ### 发布桌面安装包（GitHub Release）
 
-已配置 `electron-vite` + `electron-builder` + GitHub Actions 工作流：
+已配置 `electron-vite` + `electron-builder` + GitHub Actions：
 
-- 工作流文件：`.github/workflows/release.yml`
-- 触发方式：
-  - 推送标签（如 `v1.1.0`）自动构建并发布到对应 GitHub Release
-  - 手动触发工作流（`workflow_dispatch`）
-- 构建顺序：
-  - 先执行 `npm run build` 生成 `dist`
-  - 再执行 `electron-builder` 打包并上传 Release 资产
-- 目标平台：
-  - macOS：`dmg`、`zip`
-  - Windows：`nsis`、`portable`
-  - Linux：`AppImage`、`tar.gz`
+- 工作流：`.github/workflows/release.yml`
+- 触发：推送版本标签（如 `v1.1.5`，需与 `package.json` 中 `version` 一致），或手动 `workflow_dispatch`
+- 流程：`npm run build` 生成 `dist` → `electron-builder` 打包并上传 Release 资产
+- 目标：`macOS`（dmg、zip）、`Windows`（nsis、portable）、`Linux`（AppImage、tar.gz）
 
-本地可用命令：
+本地打包示例：
 
 ```bash
 npm run dist
@@ -112,13 +115,7 @@ npm run dist:win
 npm run dist:linux
 ```
 
-发布前建议检查：
-
-```bash
-npm run build
-```
-
-若本地构建通过，再推送版本标签（例如 `v1.1.0`，需与 `package.json` 中 `version` 一致）触发自动发版。
+发版前建议本地执行 `npm run build` 确认通过。
 
 ## 许可证
 

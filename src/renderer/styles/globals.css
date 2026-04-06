@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+}
+
+.dark {
+  --background: 224 71% 4%;
+  --foreground: 213 31% 91%;
+  --card: 224 71% 4%;
+  --card-foreground: 213 31% 91%;
+  --border: 216 34% 17%;
+  --input: 216 34% 17%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 215 27% 17%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 215 27% 17%;
+  --muted-foreground: 217 10% 64%;
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 210 40% 98%;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+}
+
+.selectable-all {
+  -webkit-user-select: all;
+  user-select: all;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--border));
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 导出弹窗：超长代码换行（覆盖 highlight.js github 主题的 pre code 横向滚动） */
+.export-code-wrap pre,
+.export-code-wrap pre.hljs,
+pre.export-code-wrap {
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.export-code-wrap pre code,
+.export-code-wrap pre.hljs code,
+pre.export-code-wrap code {
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  overflow-x: visible !important;
+}
