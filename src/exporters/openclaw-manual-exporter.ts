@@ -47,7 +47,7 @@ export class OpenClawManualExporter extends BaseExporter {
         providers[providerKey] = {
           baseUrl: this.joinUrl(config.provider.url, config.provider.endpoint),
           api: apiName,
-          apiKey: config.provider.apiKey || 'sk-xxx',
+          apiKey: config.provider.apiKey,
           models: []
         }
       }
@@ -72,7 +72,7 @@ export class OpenClawManualExporter extends BaseExporter {
       profiles[`${providerKey}-profile`] = {
         type: 'api_key',
         provider: providerKey,
-        key: providers[providerKey].apiKey || 'sk-xxx'
+        key: providers[providerKey].apiKey
       }
     })
     return {
@@ -148,4 +148,3 @@ export class OpenClawManualExporter extends BaseExporter {
     ]
   }
 }
-

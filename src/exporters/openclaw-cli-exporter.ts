@@ -84,7 +84,7 @@ export class OpenClawCliExporter extends BaseExporter {
       const providerPayload = JSON.stringify({
         api: provider.api,
         baseUrl: provider.baseUrl,
-        apiKey: provider.apiKey || 'sk-xxxxxxxxx',
+        apiKey: provider.apiKey,
         models: provider.models
       }, null, 2)
 
@@ -142,4 +142,3 @@ openclaw config set agents.defaults.models "$MERGED_MODELS_JSON"`
     ]
   }
 }
-

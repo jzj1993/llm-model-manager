@@ -5,7 +5,7 @@ function normalizeUrl(url) {
 function normalizeApiKey(apiKey) {
   const raw = String(apiKey || '').trim()
   if (!raw) return ''
-  return raw.startsWith('sk-') ? raw : `sk-${raw}`
+  return raw
 }
 
 function normalizeEndpoint(endpoint) {
@@ -128,4 +128,3 @@ function normalizeModelInput(input) {
     inputTypes: parseInputTypes(input?.inputTypes)
   }
 }
-
