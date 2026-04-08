@@ -317,12 +317,24 @@ export function useAppState() {
   async function importJsonConfigs(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
     if (!file) return
-    const text = await file.text()
-    const parsed = JSON.parse(text)
-    const incoming = Array.isArray(parsed) ? parsed : parsed.providers
-    const next = normalizeProviders(incoming || [])
-    await persist(next)
-    setSelected(new Set())
+    const input = event.target
+    try {
+      const text = await file.text()
+      const parsed = JSON.parse(text) as unknown
+      const incoming = Array.isArray(parsed) ? parsed : (parsed as { providers?: unknown })?.providers
+      if (!Array.isArray(incoming)) {
+        alert('导入失败: 需要为供应商数组，或包含 providers 数组的对象')
+        return
+      }
+      const next = normalizeProviders(incoming)
+      await persist(next)
+      setSelected(new Set())
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      alert(`导入失败: ${message}`)
+    } finally {
+      input.value = ''
+    }
   }
 
   async function loadModelList(providerIndex: number) {
