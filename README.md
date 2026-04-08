@@ -123,7 +123,7 @@ npm run dist
 已配置 `electron-vite` + `electron-builder` + GitHub Actions：
 
 - 工作流：`.github/workflows/release.yml`
-- 触发：推送版本标签（如 `v1.1.5`，需与 `package.json` 中 `version` 一致），或手动 `workflow_dispatch`
+- 触发：推送版本标签（如 `v1.0.0`，需与 `package.json` 中 `version` 一致），或手动 `workflow_dispatch`
 - 流程：`npm run build` 生成 `dist` → `electron-builder` 打包并上传 Release 资产
 - 目标：`macOS`（dmg、zip）、`Windows`（nsis、portable）、`Linux`（AppImage、tar.gz）
 
