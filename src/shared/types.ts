@@ -21,7 +21,7 @@ export interface ProviderConfig {
   id: string
   name?: string
   apiType: ApiType
-  url: string
+  baseUrl: string
   endpoint: string
   website?: string
   apiKey?: string
@@ -34,7 +34,7 @@ export interface ExportEntry {
   type?: string | null
 }
 
-/** 从远端加载模型列表弹窗（与旧版 HTML 对话框行为一致） */
+/** 从远端拉取模型列表时 UI 状态：未打开、加载中、失败（含错误信息）、成功（含模型数组） */
 export type ModelListDialogState =
   | null
   | { providerIndex: number; status: 'loading' }

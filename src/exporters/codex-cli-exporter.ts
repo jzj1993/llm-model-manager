@@ -12,7 +12,7 @@ export class CodexCliExporter extends BaseExporter {
       const providerId = provider.id
       const providerName = provider.name || providerId
       const apiKey = provider.apiKey
-      const baseUrl = provider.url
+      const baseUrl = provider.baseUrl
       const modelId = model.id
       return {
         title: `#${index + 1} ${providerName} - ${modelId}`,

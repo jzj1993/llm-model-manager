@@ -1,18 +1,23 @@
 import type { FetchHttpRequest } from '@shared/ipc'
 import type { ModelConfig, ProviderConfig } from '@shared/types'
 
-export function normalizeUrl(url: string): string {
-  return String(url || '').trim().replace(/\/+$/, '')
-}
-
-export function normalizeEndpoint(endpoint: string): string {
-  const value = String(endpoint || '').trim()
-  if (!value) return ''
-  return value.startsWith('/') ? value : `/${value}`
-}
-
+/** 将 Base URL 与 Endpoint 拼成完整请求地址：先 trim；若接缝处出现 `//` 则合并为单斜杠；若两侧在接缝处都没有 `/` 则插入一个 `/`。 */
 export function joinUrl(url: string, endpoint: string): string {
-  return `${normalizeUrl(url)}${normalizeEndpoint(endpoint)}`
+  const u = String(url || '').trim()
+  const e = String(endpoint || '').trim()
+  if (!e) return u
+  if (!u) return e
+  if (u.endsWith('/') && e.startsWith('/')) return u + e.slice(1)
+  if (!u.endsWith('/') && !e.startsWith('/')) return `${u}/${e}`
+  return u + e
+}
+
+function joinBaseAndPath(base: string, path: string): string {
+  const b = String(base || '').trim()
+  const p = String(path || '').trim().replace(/^\//, '')
+  if (!b) return p ? `/${p}` : ''
+  if (b.endsWith('/')) return `${b}${p}`
+  return `${b}/${p}`
 }
 
 function inferReasoningMode(modelName: string): boolean | null {
@@ -46,7 +51,7 @@ function buildHeaders(provider: ProviderConfig): Record<string, string> {
 
 export async function checkModelViaHttp(provider: ProviderConfig, modelName: string): Promise<{ success: boolean; message: string }> {
   const res = await fetchHttp({
-    url: joinUrl(provider.url, provider.endpoint),
+    url: joinUrl(provider.baseUrl, provider.endpoint),
     method: 'POST',
     headers: buildHeaders(provider),
     body: JSON.stringify({ model: modelName, messages: [{ role: 'user', content: 'Hello' }], max_tokens: 10 }),
@@ -63,9 +68,9 @@ export async function checkModelViaHttp(provider: ProviderConfig, modelName: str
 }
 
 export async function fetchProviderModelsList(provider: ProviderConfig): Promise<{ success: boolean; models: ModelConfig[]; message?: string }> {
-  const base = normalizeUrl(provider.url)
+  const base = String(provider.baseUrl || '').trim()
   if (!base) return { success: false, models: [], message: '供应商 URL 为空' }
-  const candidates = [`${base}/v1/models`, `${base}/models`]
+  const candidates = [joinBaseAndPath(base, 'v1/models'), joinBaseAndPath(base, 'models')]
   for (const url of candidates) {
     const response = await fetchHttp({ url, method: 'GET', headers: buildHeaders(provider), timeoutMs: 30000 })
     if (!response.ok || response.status < 200 || response.status >= 300) continue

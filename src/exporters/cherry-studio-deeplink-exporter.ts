@@ -26,7 +26,7 @@ export class CherryStudioDeeplinkExporter extends BaseExporter {
       const providerId = provider.id
       const providerName = provider.name || providerId
       const modelId = model.id
-      const baseUrl = provider.url
+      const baseUrl = provider.baseUrl
       const apiKey = provider.apiKey
       return {
         title: `#${index + 1} ${providerName} / ${modelId}`,

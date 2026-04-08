@@ -46,7 +46,7 @@ export class OpenClawManualExporter extends BaseExporter {
       const apiName = config.provider.apiType === 'anthropic' ? 'anthropic-messages' : 'openai-completions'
       if (!providers[providerKey]) {
         providers[providerKey] = {
-          baseUrl: this.joinUrl(config.provider.url, config.provider.endpoint),
+          baseUrl: this.joinUrl(config.provider.baseUrl, config.provider.endpoint),
           api: apiName,
           apiKey: config.provider.apiKey,
           models: []

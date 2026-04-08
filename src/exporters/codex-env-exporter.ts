@@ -24,7 +24,7 @@ export class CodexEnvExporter extends BaseExporter {
       const providerName = provider.name || providerId
       const modelId = model.id
       const apiKey = provider.apiKey
-      const baseUrl = provider.url
+      const baseUrl = provider.baseUrl
       return {
         title: `#${index + 1} ${providerName} / ${modelId}`,
         content: JSON.stringify(this.buildEnvPayload({ apiKey, baseUrl, modelId }), null, 2),

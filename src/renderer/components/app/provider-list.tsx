@@ -120,7 +120,7 @@ export function ProviderList({
                             <div className="flex items-center gap-1.5">
                               <span className="w-14 shrink-0 text-muted-foreground/80">Base URL</span>
                               <span className="selectable-all block min-w-0 flex-1 overflow-x-auto whitespace-nowrap text-foreground/90">
-                                {provider.url || '-'}
+                                {provider.baseUrl || '-'}
                               </span>
                             </div>
                             <div className="mt-0.5 flex items-center gap-1.5">

@@ -37,7 +37,7 @@ export class OpenClawCliExporter extends BaseExporter {
       const modelOptions = this.resolveModelOptions(config)
       if (!providers[providerKey]) {
         providers[providerKey] = {
-          baseUrl: this.joinUrl(config.provider.url, config.provider.endpoint),
+          baseUrl: this.joinUrl(config.provider.baseUrl, config.provider.endpoint),
           api: apiName,
           apiKey: config.provider.apiKey || 'xxx',
           models: []

@@ -5,7 +5,11 @@ import { ComboBox, type ComboBoxOption } from '@/components/ui/combobox'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { FieldHint, FieldLabel } from '@/components/app/field'
-import { applyApiTypeUrlEndpointDefaults, applyProviderPresetFromId, type ProviderForm } from '@/lib/preset-forms'
+import {
+  applyProviderPresetApiType,
+  applyProviderPresetFromId,
+  type ProviderForm
+} from '@/lib/preset-forms'
 import type { ProviderPreset } from '@/lib/presets'
 
 export interface ProviderDialogProps {
@@ -51,14 +55,14 @@ export function ProviderDialog({
                 setProviderForm((prev) => {
                   const id = prev.id.trim()
                   if (!id) return prev
-                  const patch = applyProviderPresetFromId(id, providerPresets)
+                  const patch = applyProviderPresetFromId(id, providerPresets, { preferredApiType: prev.apiType })
                   return { ...prev, ...patch }
                 })
               }}
               onSelectOption={(option) => {
                 const p = option.data
                 if (!p) return
-                const patch = applyProviderPresetFromId(p.id, providerPresets)
+                const patch = applyProviderPresetFromId(p.id, providerPresets, { preferredApiType: providerForm.apiType })
                 setProviderForm((prev) => ({ ...prev, ...patch }))
               }}
             />
@@ -89,33 +93,36 @@ export function ProviderDialog({
               value={providerForm.apiType}
               onChange={(e) => {
                 const apiType = e.target.value as ProviderConfig['apiType']
-                setProviderForm((prev) => applyApiTypeUrlEndpointDefaults({ ...prev, apiType }))
+                setProviderForm((prev) => {
+                  const patch = applyProviderPresetApiType(prev.id, providerPresets, apiType)
+                  return { ...prev, apiType, ...patch }
+                })
               }}
             >
               <option value="openai">OpenAI 兼容接口</option>
               <option value="anthropic">Anthropic 接口</option>
             </select>
-            <FieldHint>会影响默认 Endpoint 和鉴权头格式，请按供应商文档选择。</FieldHint>
+            <FieldHint>接口类型</FieldHint>
           </div>
           <div className="space-y-1">
             <FieldLabel>Base URL</FieldLabel>
             <ComboBox
-              placeholder="https://api.openai.com/v1"
-              value={providerForm.url}
-              onChange={(url) => setProviderForm((prev) => ({ ...prev, url }))}
+              placeholder="输入或从列表选择"
+              value={providerForm.baseUrl}
+              onChange={(baseUrl) => setProviderForm((prev) => ({ ...prev, baseUrl }))}
               options={urlPresetOptions}
             />
-            <FieldHint>服务根地址，不包含具体接口路径；保存时会自动去掉末尾斜杠。</FieldHint>
+            <FieldHint>服务根地址，不包含具体接口路径；末尾通常不加斜杠。</FieldHint>
           </div>
           <div className="space-y-1">
             <FieldLabel>Endpoint</FieldLabel>
             <ComboBox
-              placeholder="/v1/chat/completions"
+              placeholder="输入或从列表选择"
               value={providerForm.endpoint}
               onChange={(endpoint) => setProviderForm((prev) => ({ ...prev, endpoint }))}
               options={endpointPresetOptions}
             />
-            <FieldHint>模型请求路径，支持输入不带 `/` 的值，保存时会自动补齐。</FieldHint>
+            <FieldHint>模型请求路径，按服务端实际路径填写。</FieldHint>
           </div>
           <div className="col-span-2 space-y-1">
             <FieldLabel>API Key（可选）</FieldLabel>

@@ -1,0 +1,1615 @@
+{
+  "a2a": {
+    "name": "a2a",
+    "base_url": null,
+    "supported_params": [
+      "stream",
+      "temperature",
+      "max_tokens",
+      "top_p"
+    ],
+    "config_classes": [
+      "chat.transformation.A2AConfig"
+    ],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "ai21": {
+    "name": "ai21",
+    "base_url": null,
+    "supported_params": [
+      "tools",
+      "response_format",
+      "max_tokens",
+      "max_completion_tokens",
+      "temperature",
+      "stop",
+      "n",
+      "stream",
+      "seed",
+      "tool_choice"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "aiml": {
+    "name": "aiml",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "AIML_API_BASE",
+      "AIML_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "aiohttp_openai": {
+    "name": "aiohttp_openai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "amazon_nova": {
+    "name": "amazon_nova",
+    "base_url": null,
+    "supported_params": [
+      "top_p",
+      "temperature",
+      "max_tokens",
+      "max_completion_tokens",
+      "metadata",
+      "stop",
+      "stream",
+      "stream_options",
+      "tools",
+      "tool_choice",
+      "reasoning_effort"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "AMAZON_NOVA_API_BASE",
+      "AMAZON_NOVA_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "anthropic": {
+    "name": "anthropic",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [
+      "batches.transformation.AnthropicBatchesConfig",
+      "chat.transformation.AnthropicConfig"
+    ],
+    "sdk": null,
+    "env_vars": [
+      "ANTHROPIC_API_BASE",
+      "ANTHROPIC_BASE_URL",
+      "ANTHROPIC_AUTH_TOKEN",
+      "ANTHROPIC_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "aws_polly": {
+    "name": "aws_polly",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "azure": {
+    "name": "azure",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": "openai",
+    "env_vars": [
+      "AZURE_SCOPE",
+      "AZURE_CLIENT_ID",
+      "AZURE_API_KEY",
+      "AZURE_PASSWORD",
+      "AZURE_API_VERSION",
+      "AZURE_OPENAI_API_KEY",
+      "AZURE_USERNAME",
+      "AZURE_TENANT_ID",
+      "AZURE_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "azure_ai": {
+    "name": "azure_ai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "AZURE_AI_API_KEY",
+      "AZURE_AI_API_BASE",
+      "AZURE_API_VERSION"
+    ],
+    "auth_type": "api_key"
+  },
+  "baseten": {
+    "name": "baseten",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "bedrock": {
+    "name": "bedrock",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": "boto3",
+    "env_vars": [
+      "AWS_BEDROCK_RUNTIME_ENDPOINT",
+      "AWS_REGION_NAME",
+      "AWS_REGION"
+    ],
+    "auth_type": "aws_credentials"
+  },
+  "bedrock_mantle": {
+    "name": "bedrock_mantle",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "AWS_REGION",
+      "BEDROCK_MANTLE_API_BASE",
+      "BEDROCK_MANTLE_REGION",
+      "BEDROCK_MANTLE_API_KEY"
+    ],
+    "auth_type": "aws_credentials"
+  },
+  "black_forest_labs": {
+    "name": "black_forest_labs",
+    "base_url": "https://api.bfl.ai",
+    "supported_params": [],
+    "config_classes": [
+      "image_edit.BlackForestLabsImageEditConfig",
+      "image_generation.BlackForestLabsImageGenerationConfig"
+    ],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "brave": {
+    "name": "brave",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "bytez": {
+    "name": "bytez",
+    "base_url": "https://api.bytez.com/models/v2",
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "cerebras": {
+    "name": "cerebras",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "chatgpt": {
+    "name": "chatgpt",
+    "base_url": "https://chatgpt.com/backend-api/codex",
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": "openai",
+    "env_vars": [
+      "KITTY_WINDOW_ID",
+      "TERM_PROGRAM_VERSION",
+      "TERM",
+      "ITERM_SESSION_ID",
+      "ITERM_PROFILE_NAME",
+      "TERM_PROGRAM",
+      "KONSOLE_VERSION",
+      "VTE_VERSION",
+      "WT_SESSION",
+      "CHATGPT_USER_AGENT_SUFFIX",
+      "ITERM_PROFILE",
+      "ALACRITTY_SOCKET",
+      "TERM_SESSION_ID",
+      "WEZTERM_VERSION",
+      "CHATGPT_ORIGINATOR",
+      "CHATGPT_USER_AGENT",
+      "GNOME_TERMINAL_SCREEN",
+      "CHATGPT_DEFAULT_INSTRUCTIONS"
+    ],
+    "auth_type": "api_key"
+  },
+  "clarifai": {
+    "name": "clarifai",
+    "base_url": "https://api.clarifai.com/v2/ext/openai/v1",
+    "supported_params": [
+      "max_tokens",
+      "max_completion_tokens",
+      "response_format",
+      "stream",
+      "temperature",
+      "top_p",
+      "tool_choice",
+      "tools",
+      "presence_penalty",
+      "frequency_penalty",
+      "stream_options"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "CLARIFAI_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "cloudflare": {
+    "name": "cloudflare",
+    "base_url": null,
+    "supported_params": [
+      "stream",
+      "max_tokens"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "CLOUDFLARE_ACCOUNT_ID"
+    ],
+    "auth_type": null
+  },
+  "codestral": {
+    "name": "codestral",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "cohere": {
+    "name": "cohere",
+    "base_url": null,
+    "supported_params": [
+      "stream",
+      "temperature",
+      "max_tokens",
+      "max_completion_tokens",
+      "top_p",
+      "frequency_penalty",
+      "presence_penalty",
+      "stop",
+      "n",
+      "tools",
+      "tool_choice",
+      "seed",
+      "extra_headers"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "cometapi": {
+    "name": "cometapi",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "compactifai": {
+    "name": "compactifai",
+    "base_url": "https://api.compactif.ai/v1",
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "COMPACTIFAI_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "dashscope": {
+    "name": "dashscope",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "DASHSCOPE_API_BASE",
+      "DASHSCOPE_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "databricks": {
+    "name": "databricks",
+    "base_url": null,
+    "supported_params": [
+      "stream",
+      "stop",
+      "temperature",
+      "top_p",
+      "max_tokens",
+      "max_completion_tokens",
+      "n",
+      "response_format",
+      "tools",
+      "tool_choice",
+      "reasoning_effort",
+      "thinking"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "DATABRICKS_CLIENT_ID",
+      "LITELLM_USER_AGENT",
+      "DATABRICKS_API_BASE",
+      "DATABRICKS_CLIENT_SECRET",
+      "DATABRICKS_USER_AGENT"
+    ],
+    "auth_type": null
+  },
+  "dataforseo": {
+    "name": "dataforseo",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "datarobot": {
+    "name": "datarobot",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "DATAROBOT_ENDPOINT",
+      "DATAROBOT_API_TOKEN"
+    ],
+    "auth_type": null
+  },
+  "deepgram": {
+    "name": "deepgram",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "deepinfra": {
+    "name": "deepinfra",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "DEEPINFRA_API_KEY",
+      "DEEPINFRA_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "deepseek": {
+    "name": "deepseek",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "DEEPSEEK_API_BASE",
+      "DEEPSEEK_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "docker_model_runner": {
+    "name": "docker_model_runner",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "DOCKER_MODEL_RUNNER_API_BASE",
+      "DOCKER_MODEL_RUNNER_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "duckduckgo": {
+    "name": "duckduckgo",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "elevenlabs": {
+    "name": "elevenlabs",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "empower": {
+    "name": "empower",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "exa_ai": {
+    "name": "exa_ai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "fal_ai": {
+    "name": "fal_ai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "featherless_ai": {
+    "name": "featherless_ai",
+    "base_url": null,
+    "supported_params": [
+      "stream",
+      "frequency_penalty",
+      "function_call",
+      "functions",
+      "logit_bias",
+      "max_tokens",
+      "max_completion_tokens",
+      "n",
+      "presence_penalty",
+      "stop",
+      "temperature",
+      "top_p"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "FEATHERLESS_AI_API_KEY",
+      "FEATHERLESS_API_KEY",
+      "FEATHERLESS_API_BASE",
+      "FEATHERLESS_AI_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "firecrawl": {
+    "name": "firecrawl",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "fireworks_ai": {
+    "name": "fireworks_ai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "FIREWORKS_AI_TOKEN",
+      "FIREWORKSAI_API_KEY",
+      "FIREWORKS_AI_API_KEY",
+      "FIREWORKS_API_BASE",
+      "FIREWORKS_ACCOUNT_ID",
+      "FIREWORKS_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "friendliai": {
+    "name": "friendliai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "galadriel": {
+    "name": "galadriel",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "gemini": {
+    "name": "gemini",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "GEMINI_API_BASE",
+      "GEMINI_API_KEY",
+      "GOOGLE_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "gigachat": {
+    "name": "gigachat",
+    "base_url": null,
+    "supported_params": [
+      "stream",
+      "temperature",
+      "top_p",
+      "max_tokens",
+      "max_completion_tokens",
+      "stop",
+      "tools",
+      "tool_choice",
+      "functions",
+      "function_call",
+      "response_format"
+    ],
+    "config_classes": [
+      "chat.transformation.GigaChatConfig",
+      "embedding.transformation.GigaChatEmbeddingConfig"
+    ],
+    "sdk": null,
+    "env_vars": [
+      "GIGACHAT_API_KEY",
+      "GIGACHAT_CREDENTIALS",
+      "GIGACHAT_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "github": {
+    "name": "github",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "github_copilot": {
+    "name": "github_copilot",
+    "base_url": "https://api.githubcopilot.com",
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "google_pse": {
+    "name": "google_pse",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "gradient_ai": {
+    "name": "gradient_ai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "GRADIENT_AI_AGENT_ENDPOINT",
+      "GRADIENT_AI_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "groq": {
+    "name": "groq",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "GROQ_API_BASE",
+      "GROQ_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "heroku": {
+    "name": "heroku",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "HEROKU_API_KEY",
+      "HEROKU_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "hosted_vllm": {
+    "name": "hosted_vllm",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "HOSTED_VLLM_API_BASE",
+      "HOSTED_VLLM_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "huggingface": {
+    "name": "huggingface",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "HF_API_BASE",
+      "HUGGINGFACE_API_KEY",
+      "HUGGINGFACE_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "hyperbolic": {
+    "name": "hyperbolic",
+    "base_url": null,
+    "supported_params": [
+      "messages",
+      "model",
+      "stream",
+      "temperature",
+      "top_p",
+      "max_tokens",
+      "frequency_penalty",
+      "presence_penalty",
+      "stop",
+      "n",
+      "tools",
+      "tool_choice",
+      "response_format",
+      "seed",
+      "user"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "HYPERBOLIC_API_KEY",
+      "HYPERBOLIC_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "infinity": {
+    "name": "infinity",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "jina_ai": {
+    "name": "jina_ai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "lambda_ai": {
+    "name": "lambda_ai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "LAMBDA_API_BASE",
+      "LAMBDA_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "langgraph": {
+    "name": "langgraph",
+    "base_url": null,
+    "supported_params": [
+      "stream"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "LANGGRAPH_API_BASE",
+      "LANGGRAPH_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "lemonade": {
+    "name": "lemonade",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "LEMONADE_API_BASE"
+    ],
+    "auth_type": null
+  },
+  "linkup": {
+    "name": "linkup",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "litellm_proxy": {
+    "name": "litellm_proxy",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "LITELLM_PROXY_API_BASE",
+      "LITELLM_PROXY_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "llamafile": {
+    "name": "llamafile",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "LLAMAFILE_API_KEY",
+      "LLAMAFILE_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "lm_studio": {
+    "name": "lm_studio",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "LM_STUDIO_API_BASE",
+      "LM_STUDIO_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "manus": {
+    "name": "manus",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "meta_llama": {
+    "name": "meta_llama",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "milvus": {
+    "name": "milvus",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "minimax": {
+    "name": "minimax",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "MINIMAX_API_KEY",
+      "MINIMAX_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "mistral": {
+    "name": "mistral",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "MISTRAL_AZURE_API_BASE",
+      "MISTRAL_API_KEY",
+      "MISTRAL_AZURE_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "moonshot": {
+    "name": "moonshot",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "MOONSHOT_API_BASE",
+      "MOONSHOT_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "morph": {
+    "name": "morph",
+    "base_url": null,
+    "supported_params": [
+      "messages",
+      "model",
+      "stream"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "MORPH_API_BASE",
+      "MORPH_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "nebius": {
+    "name": "nebius",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "nlp_cloud": {
+    "name": "nlp_cloud",
+    "base_url": null,
+    "supported_params": [
+      "max_tokens",
+      "stream",
+      "temperature",
+      "top_p",
+      "presence_penalty",
+      "frequency_penalty",
+      "n",
+      "stop"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "novita": {
+    "name": "novita",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "nscale": {
+    "name": "nscale",
+    "base_url": null,
+    "supported_params": [
+      "max_tokens",
+      "n",
+      "temperature",
+      "top_p",
+      "stream",
+      "logprobs",
+      "top_logprobs",
+      "frequency_penalty",
+      "presence_penalty",
+      "response_format",
+      "stop",
+      "logit_bias"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "NSCALE_API_KEY",
+      "NSCALE_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "nvidia_nim": {
+    "name": "nvidia_nim",
+    "base_url": null,
+    "supported_params": [
+      "stream",
+      "temperature",
+      "top_p",
+      "frequency_penalty",
+      "presence_penalty",
+      "max_tokens",
+      "max_completion_tokens",
+      "stop",
+      "seed",
+      "tools",
+      "tool_choice",
+      "parallel_tool_calls",
+      "response_format"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "oci": {
+    "name": "oci",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "ollama": {
+    "name": "ollama",
+    "base_url": null,
+    "supported_params": [
+      "max_tokens",
+      "max_completion_tokens",
+      "stream",
+      "top_p",
+      "temperature",
+      "seed",
+      "frequency_penalty",
+      "stop",
+      "tools",
+      "tool_choice",
+      "functions",
+      "response_format",
+      "reasoning_effort"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "OLLAMA_API_KEY",
+      "OLLAMA_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "oobabooga": {
+    "name": "oobabooga",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "openai": {
+    "name": "openai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": "openai",
+    "env_vars": [
+      "OPENAI_ORGANIZATION",
+      "OPENAI_BASE_URL",
+      "OPENAI_API_BASE",
+      "OPENAI_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "openai_like": {
+    "name": "openai_like",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "OPENAI_LIKE_API_BASE",
+      "OPENAI_LIKE_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "openrouter": {
+    "name": "openrouter",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "ovhcloud": {
+    "name": "ovhcloud",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "parallel_ai": {
+    "name": "parallel_ai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "pass_through": {
+    "name": "pass_through",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "perplexity": {
+    "name": "perplexity",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "PERPLEXITYAI_API_KEY",
+      "PERPLEXITY_API_KEY",
+      "PERPLEXITY_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "petals": {
+    "name": "petals",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "pg_vector": {
+    "name": "pg_vector",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "predibase": {
+    "name": "predibase",
+    "base_url": null,
+    "supported_params": [
+      "stream",
+      "temperature",
+      "max_completion_tokens",
+      "max_tokens",
+      "top_p",
+      "stop",
+      "n",
+      "response_format"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "ragflow": {
+    "name": "ragflow",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "RAGFLOW_API_BASE",
+      "RAGFLOW_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "recraft": {
+    "name": "recraft",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "replicate": {
+    "name": "replicate",
+    "base_url": null,
+    "supported_params": [
+      "stream",
+      "temperature",
+      "max_tokens",
+      "top_p",
+      "stop",
+      "seed",
+      "tools",
+      "tool_choice",
+      "functions",
+      "function_call"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "runwayml": {
+    "name": "runwayml",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [
+      "videos.transformation.RunwayMLVideoConfig"
+    ],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "s3_vectors": {
+    "name": "s3_vectors",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "sagemaker": {
+    "name": "sagemaker",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "sambanova": {
+    "name": "sambanova",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "sap": {
+    "name": "sap",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "searchapi": {
+    "name": "searchapi",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "searxng": {
+    "name": "searxng",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "serper": {
+    "name": "serper",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "snowflake": {
+    "name": "snowflake",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "stability": {
+    "name": "stability",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "tavily": {
+    "name": "tavily",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "together_ai": {
+    "name": "together_ai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "topaz": {
+    "name": "topaz",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "TOPAZ_API_BASE",
+      "TOPAZ_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "triton": {
+    "name": "triton",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "v0": {
+    "name": "v0",
+    "base_url": null,
+    "supported_params": [
+      "messages",
+      "model",
+      "stream",
+      "tools",
+      "tool_choice"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "V0_API_BASE",
+      "V0_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "vercel_ai_gateway": {
+    "name": "vercel_ai_gateway",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "VERCEL_AI_GATEWAY_API_BASE",
+      "VERCEL_AI_GATEWAY_API_KEY",
+      "VERCEL_OIDC_TOKEN"
+    ],
+    "auth_type": "api_key"
+  },
+  "vertex_ai": {
+    "name": "vertex_ai",
+    "base_url": "https://aiplatform.googleapis.com",
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "vllm": {
+    "name": "vllm",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "VLLM_API_BASE"
+    ],
+    "auth_type": null
+  },
+  "volcengine": {
+    "name": "volcengine",
+    "base_url": "https://ark.cn-beijing.volces.com",
+    "supported_params": [
+      "frequency_penalty",
+      "logit_bias",
+      "logprobs",
+      "top_logprobs",
+      "max_completion_tokens",
+      "max_tokens",
+      "n",
+      "presence_penalty",
+      "seed",
+      "stop",
+      "stream",
+      "stream_options",
+      "temperature",
+      "top_p",
+      "tools",
+      "tool_choice",
+      "function_call",
+      "functions",
+      "max_retries",
+      "extra_headers",
+      "thinking"
+    ],
+    "config_classes": [
+      "chat.transformation.VolcEngineChatConfig",
+      "embedding.VolcEngineEmbeddingConfig",
+      "responses.transformation.VolcEngineResponsesAPIConfig"
+    ],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "voyage": {
+    "name": "voyage",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "wandb": {
+    "name": "wandb",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "watsonx": {
+    "name": "watsonx",
+    "base_url": null,
+    "supported_params": [
+      "temperature",
+      "max_tokens",
+      "top_p",
+      "frequency_penalty",
+      "stop",
+      "seed",
+      "stream",
+      "tools",
+      "tool_choice",
+      "logprobs",
+      "top_logprobs",
+      "n",
+      "presence_penalty",
+      "response_format",
+      "reasoning_effort"
+    ],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "PROJECT_ID",
+      "REGION",
+      "WATSONX_TOKEN",
+      "HOSTED_VLLM_API_KEY",
+      "WX_PROJECT_ID",
+      "WATSONX_ZENAPIKEY",
+      "WX_API_KEY",
+      "HOSTED_VLLM_API_BASE",
+      "WATSONX_APIKEY",
+      "WATSONX_SPACE_ID",
+      "WML_URL",
+      "WATSONX_URL",
+      "WATSONX_REGION",
+      "WATSONX_IAM_URL",
+      "WX_SPACE_ID",
+      "WX_REGION",
+      "WATSONX_API_KEY",
+      "SPACE_ID",
+      "WX_URL",
+      "WATSONX_DEPLOYMENT_SPACE_ID",
+      "WATSONX_API_BASE",
+      "WATSONX_PROJECT_ID"
+    ],
+    "auth_type": "api_key"
+  },
+  "xai": {
+    "name": "xai",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "XAI_API_KEY",
+      "XAI_API_BASE"
+    ],
+    "auth_type": "api_key"
+  },
+  "xinference": {
+    "name": "xinference",
+    "base_url": null,
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [],
+    "auth_type": null
+  },
+  "zai": {
+    "name": "zai",
+    "base_url": "https://api.z.ai/api/paas/v4",
+    "supported_params": [],
+    "config_classes": [],
+    "sdk": null,
+    "env_vars": [
+      "ZAI_API_BASE",
+      "ZAI_API_KEY"
+    ],
+    "auth_type": "api_key"
+  },
+  "publicai": {
+    "name": "publicai",
+    "base_url": "https://api.publicai.co/v1",
+    "api_key_env": "PUBLICAI_API_KEY",
+    "base_class": "openai_gpt",
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "helicone": {
+    "name": "helicone",
+    "base_url": "https://ai-gateway.helicone.ai/",
+    "api_key_env": "HELICONE_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "veniceai": {
+    "name": "veniceai",
+    "base_url": "https://api.venice.ai/api/v1",
+    "api_key_env": "VENICE_AI_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "xiaomi_mimo": {
+    "name": "xiaomi_mimo",
+    "base_url": "https://api.xiaomimimo.com/v1",
+    "api_key_env": "XIAOMI_MIMO_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "scaleway": {
+    "name": "scaleway",
+    "base_url": "https://api.scaleway.ai/v1",
+    "api_key_env": "SCW_SECRET_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "synthetic": {
+    "name": "synthetic",
+    "base_url": "https://api.synthetic.new/openai/v1",
+    "api_key_env": "SYNTHETIC_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "apertis": {
+    "name": "apertis",
+    "base_url": "https://api.stima.tech/v1",
+    "api_key_env": "STIMA_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "nano-gpt": {
+    "name": "nano-gpt",
+    "base_url": "https://nano-gpt.com/api/v1",
+    "api_key_env": "NANOGPT_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "poe": {
+    "name": "poe",
+    "base_url": "https://api.poe.com/v1",
+    "api_key_env": "POE_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "chutes": {
+    "name": "chutes",
+    "base_url": "https://llm.chutes.ai/v1/",
+    "api_key_env": "CHUTES_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "abliteration": {
+    "name": "abliteration",
+    "base_url": "https://api.abliteration.ai/v1",
+    "api_key_env": "ABLITERATION_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "llamagate": {
+    "name": "llamagate",
+    "base_url": "https://api.llamagate.dev/v1",
+    "api_key_env": "LLAMAGATE_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "gmi": {
+    "name": "gmi",
+    "base_url": "https://api.gmi-serving.com/v1",
+    "api_key_env": "GMI_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "sarvam": {
+    "name": "sarvam",
+    "base_url": "https://api.sarvam.ai/v1",
+    "api_key_env": "SARVAM_API_KEY",
+    "base_class": "openai_gpt",
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "assemblyai": {
+    "name": "assemblyai",
+    "base_url": "https://llm-gateway.assemblyai.com/v1",
+    "api_key_env": "ASSEMBLYAI_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  },
+  "charity_engine": {
+    "name": "charity_engine",
+    "base_url": "https://api.charityengine.services/remotejobs/v2/inference",
+    "api_key_env": "CHARITY_ENGINE_API_KEY",
+    "base_class": null,
+    "type": "openai_like",
+    "auth_type": "api_key"
+  }
+}

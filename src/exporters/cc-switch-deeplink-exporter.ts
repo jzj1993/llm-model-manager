@@ -41,7 +41,7 @@ export class CCSwitchDeepLinkExporter extends BaseExporter {
   }
 
   buildProviderParams(config) {
-    const endpoint = this.joinUrl(config.provider.url, config.provider.endpoint)
+    const endpoint = this.joinUrl(config.provider.baseUrl, config.provider.endpoint)
     const providerName = String(config.provider.name || config.provider.id || 'Provider') || 'Provider'
     const params = new URLSearchParams({
       resource: 'provider',

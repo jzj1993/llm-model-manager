@@ -5,7 +5,7 @@ import { exporters } from '../../exporters'
 import type { ExportEntry, ModelListDialogState } from '@shared/types'
 import type { ModelConfig, ProviderConfig } from '@shared/types'
 import type { ComboBoxOption } from '@/components/ui/combobox'
-import { checkModelViaHttp, fetchProviderModelsList, normalizeEndpoint, normalizeUrl } from '@/lib/provider-api'
+import { checkModelViaHttp, fetchProviderModelsList } from '@/lib/provider-api'
 import {
   emptyModelForm,
   emptyProviderForm,
@@ -16,9 +16,7 @@ import {
 } from '@/lib/app-constants'
 import { buildEnvCommandFromPayload } from '@/lib/export-render'
 import {
-  applyApiTypeUrlEndpointDefaults,
   applyModelPresetById,
-  applyProviderPresetFromId,
   buildEndpointComboOptions,
   buildModelIdComboOptions,
   buildUrlComboOptions,
@@ -54,6 +52,8 @@ export function useAppState() {
   const [providerForm, setProviderForm] = useState<ProviderForm>(emptyProviderForm)
   const [modelForm, setModelForm] = useState<ModelForm>(emptyModelForm)
   const [providerPresets, setProviderPresets] = useState<ProviderPreset[]>([])
+  const [providerBaseUrlPresets, setProviderBaseUrlPresets] = useState<string[]>([])
+  const [providerEndpointPresets, setProviderEndpointPresets] = useState<string[]>([])
   const [modelPresets, setModelPresets] = useState<ModelPreset[]>([])
   const [exportOpen, setExportOpen] = useState(false)
   const [exporterId, setExporterId] = useState(exporters[0]?.id || '')
@@ -84,14 +84,18 @@ export function useAppState() {
       providerPresets.map((p) => ({
         value: p.id,
         label: p.name || '',
-        keywords: [p.name || '', p.url || '', p.endpoint || ''],
+        keywords: [
+          p.id,
+          p.name || '',
+          ...(p.apiConfigs || []).flatMap((c) => [c.baseUrl, c.endpoint, c.apiType])
+        ].filter(Boolean),
         data: p
       })),
     [providerPresets]
   )
 
-  const urlPresetOptions = useMemo(() => buildUrlComboOptions(providerPresets), [providerPresets])
-  const endpointPresetOptions = useMemo(() => buildEndpointComboOptions(providerPresets), [providerPresets])
+  const urlPresetOptions = useMemo(() => buildUrlComboOptions(providerBaseUrlPresets), [providerBaseUrlPresets])
+  const endpointPresetOptions = useMemo(() => buildEndpointComboOptions(providerEndpointPresets), [providerEndpointPresets])
 
   const modelIdComboOptions = useMemo(() => {
     if (modelDialog.providerIndex < 0) return []
@@ -112,6 +116,8 @@ export function useAppState() {
       setProviders(normalizeProviders(loaded))
       const presets = await loadPresets()
       setProviderPresets(presets.providers)
+      setProviderBaseUrlPresets(presets.baseUrls)
+      setProviderEndpointPresets(presets.endpoints)
       setModelPresets(presets.models)
     })()
   }, [])
@@ -122,7 +128,7 @@ export function useAppState() {
       const p = providers[index]
       setProviderForm({ ...p })
     } else {
-      setProviderForm(applyApiTypeUrlEndpointDefaults({ ...emptyProviderForm }))
+      setProviderForm({ ...emptyProviderForm })
     }
   }
 
@@ -133,11 +139,11 @@ export function useAppState() {
   }
 
   async function onSaveProvider() {
-    if (!providerForm.id || !providerForm.url || !providerForm.endpoint) return alert('请填写供应商必填字段')
+    if (!providerForm.id || !providerForm.baseUrl || !providerForm.endpoint) return alert('请填写供应商必填字段')
     const normalized: ProviderConfig = {
       ...providerForm,
-      url: normalizeUrl(providerForm.url),
-      endpoint: normalizeEndpoint(providerForm.endpoint),
+      baseUrl: String(providerForm.baseUrl || '').trim(),
+      endpoint: String(providerForm.endpoint || '').trim(),
       models: providerDialog.index >= 0 ? providers[providerDialog.index].models : []
     }
     const next = [...providers]

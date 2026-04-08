@@ -1,5 +1,4 @@
 import type { ModelConfig, ProviderConfig } from '@shared/types'
-import { normalizeEndpoint, normalizeUrl } from '@/lib/provider-api'
 import type { ProviderForm } from '@/lib/preset-forms'
 
 export type ModelForm = Omit<ModelConfig, 'status' | 'lastCheck' | 'lastMessage'>
@@ -8,7 +7,7 @@ export const emptyProviderForm: ProviderForm = {
   id: '',
   name: '',
   apiType: 'openai',
-  url: '',
+  baseUrl: '',
   endpoint: '',
   website: '',
   apiKey: ''
@@ -35,8 +34,8 @@ export function normalizeProviders(raw: ProviderConfig[]): ProviderConfig[] {
     ...provider,
     id: String(provider.id || '').trim(),
     name: String(provider.name || '').trim(),
-    url: normalizeUrl(String(provider.url || '').trim()),
-    endpoint: normalizeEndpoint(String(provider.endpoint || '').trim()),
+    baseUrl: String(provider.baseUrl || '').trim(),
+    endpoint: String(provider.endpoint || '').trim(),
     models: (Array.isArray(provider.models) ? provider.models : []).map((m) => ({
       id: String(m.id || '').trim(),
       name: String(m.name || '').trim() || String(m.id || '').trim(),

@@ -39,12 +39,18 @@ class PresetsHelper {
         console.log('开始加载预设数据...')
         
         // 并行加载 Provider 和 Model 预设
-        const [providers, models] = await Promise.all([
+        const [providerData, models] = await Promise.all([
           this.loadJSON('provider-presets.json'),
           this.loadJSON('model-presets.json')
         ])
 
-        this.providersCache = Array.isArray(providers) ? providers : []
+        if (Array.isArray(providerData)) {
+          this.providersCache = providerData
+        } else if (providerData && Array.isArray(providerData.providers)) {
+          this.providersCache = providerData.providers
+        } else {
+          this.providersCache = []
+        }
         this.modelsCache = Array.isArray(models) ? models : []
         this.isReady = true
 
@@ -151,7 +157,7 @@ class PresetsHelper {
   // 确保 Helper 已初始化
   ensureInitialized() {
     if (this.providersCache === null || this.modelsCache === null) {
-      console.warn('Presets Helper 尚未完全初始化，使用临时空数组')
+      console.warn('Presets Helper 尚未完全初始化，使用空数组作为缓存')
       this.providersCache = []
       this.modelsCache = []
     }
