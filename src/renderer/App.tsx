@@ -11,7 +11,7 @@ export default function App() {
   const app = useAppState()
 
   return (
-    <TooltipProvider delayDuration={100}>
+    <TooltipProvider delayDuration={300}>
       <div className="flex h-screen flex-col overflow-hidden p-4">
         <AppToolbar
           onAddProvider={() => app.openProviderDialog()}

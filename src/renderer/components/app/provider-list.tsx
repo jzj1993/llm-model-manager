@@ -1,4 +1,4 @@
-import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core'
+import { DndContext, closestCenter, type DragEndEvent, type Modifier } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import type { Dispatch, SetStateAction } from 'react'
 import { ChevronDown, ChevronRight, Copy, List, Pencil, Plus, Trash2 } from 'lucide-react'
@@ -32,6 +32,13 @@ export interface ProviderListProps {
   onModelDragEnd: (providerIndex: number, event: DragEndEvent) => void | Promise<void>
 }
 
+const restrictToVerticalAxis: Modifier = ({ transform }) => {
+  return {
+    ...transform,
+    x: 0
+  }
+}
+
 export function ProviderList({
   providers,
   selected,
@@ -55,13 +62,17 @@ export function ProviderList({
 }: ProviderListProps) {
   return (
     <div className="mt-4 min-h-0 flex-1 overflow-y-auto pr-1">
-      <DndContext collisionDetection={closestCenter} onDragEnd={(event) => void onProviderDragEnd(event)}>
+      <DndContext
+        collisionDetection={closestCenter}
+        modifiers={[restrictToVerticalAxis]}
+        onDragEnd={(event) => void onProviderDragEnd(event)}
+      >
         <SortableContext items={providers.map((_, index) => `provider-${index}`)} strategy={verticalListSortingStrategy}>
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {providers.map((provider, providerIndex) => (
               <SortableItem key={provider.id || providerIndex} id={`provider-${providerIndex}`}>
                 {({ dragHandleProps }) => (
-                  <div className="rounded-lg border border-border bg-card py-3 pl-2 pr-3">
+                  <div className="rounded-md border bg-muted/10 py-2.5 pl-2 pr-2.5">
                     <div className={`${isProviderCollapsed(provider, providerIndex) ? 'mb-0' : 'mb-2'} flex items-center gap-3`}>
                       <div className="flex shrink-0 items-center gap-1">
                         <button
@@ -94,15 +105,20 @@ export function ProviderList({
                         <div className="grid min-w-0 items-center gap-3" style={{ gridTemplateColumns: '1.7fr 0.75fr 1.65fr 0.9fr' }}>
                           <div className="min-w-0">
                             {provider.website ? (
-                              <button
-                                type="button"
-                                className="inline-flex w-fit max-w-full min-w-0 cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded-sm text-left text-base font-semibold text-primary hover:underline"
-                                onClick={() => void openProviderWebsite(provider.website)}
-                                title={provider.website}
-                                data-no-row-toggle="true"
-                              >
-                                {provider.name || provider.id}
-                              </button>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <button
+                                    type="button"
+                                    className="inline-flex w-fit max-w-full min-w-0 cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded-sm text-left text-base font-semibold text-primary hover:underline"
+                                    onClick={() => void openProviderWebsite(provider.website)}
+                                    aria-label={provider.website}
+                                    data-no-row-toggle="true"
+                                  >
+                                    {provider.name || provider.id}
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent>{provider.website}</TooltipContent>
+                              </Tooltip>
                             ) : (
                               <div className="overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold">{provider.name || provider.id}</div>
                             )}
@@ -178,7 +194,11 @@ export function ProviderList({
                     </div>
 
                     {!isProviderCollapsed(provider, providerIndex) && (
-                      <DndContext collisionDetection={closestCenter} onDragEnd={(event) => void onModelDragEnd(providerIndex, event)}>
+                      <DndContext
+                        collisionDetection={closestCenter}
+                        modifiers={[restrictToVerticalAxis]}
+                        onDragEnd={(event) => void onModelDragEnd(providerIndex, event)}
+                      >
                         <SortableContext
                           items={provider.models.map((_, modelIndex) => `model-${providerIndex}-${modelIndex}`)}
                           strategy={verticalListSortingStrategy}

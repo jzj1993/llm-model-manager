@@ -1432,6 +1432,12 @@
     }
   ],
   "baseUrls": [
+    "https://api.openai.com/v1",
+    "https://api.anthropic.com",
+    "https://ark.cn-beijing.volces.com/api/coding/v3",
+    "https://ark.cn-beijing.volces.com/api/coding",
+    "https://api.minimaxi.com/v1",
+    "https://api.minimaxi.com/anthropic",
     "https://ai-gateway.helicone.ai",
     "https://aiplatform.googleapis.com",
     "https://api.abliteration.ai/v1",

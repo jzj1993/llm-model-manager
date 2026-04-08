@@ -12,9 +12,9 @@ Electron 桌面应用，用于集中管理 LLM 供应商与模型配置：支持
 - 配置备份与迁移：右下角「导出 JSON」「导入 JSON」
 - 本地持久化：配置写入 Electron `userData` 目录下的 `configs.json`
 
-![](assets/20260402_035320_image.png)
+![](assets/20260408_151459_image.png)
 
-![](assets/20260402_035346_image.png)
+![](assets/20260408_151525_image.png)
 
 ## 下载安装包
 
