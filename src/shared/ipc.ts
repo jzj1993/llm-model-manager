@@ -17,9 +17,25 @@ export interface FetchHttpRequest {
   timeoutMs?: number
 }
 
+export interface FetchHttpExchange {
+  request: {
+    url: string
+    method: string
+    headers: Record<string, string>
+    body: string | null
+  }
+  response?: {
+    status: number
+    statusText: string
+    headers: Record<string, string>
+    body: string
+  }
+  error?: string
+}
+
 export type FetchHttpResponse =
-  | { ok: true; status: number; statusText: string; body: string; headers?: Record<string, string> }
-  | { ok: false; error: string }
+  | { ok: true; status: number; statusText: string; body: string; headers?: Record<string, string>; exchange?: FetchHttpExchange }
+  | { ok: false; error: string; exchange?: FetchHttpExchange }
 
 export interface SaveResult {
   success: boolean

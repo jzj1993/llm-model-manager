@@ -43,7 +43,7 @@ export function ModelTestButton({
           onClick={onTest}
           aria-busy={isChecking}
           aria-label={summary}
-          title={titleText}
+          title={summary}
           className="h-8 w-8 shrink-0 p-0 disabled:opacity-100"
         >
           {icon}

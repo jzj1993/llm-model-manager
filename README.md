@@ -120,23 +120,33 @@ npm run dist
 
 ### 发布桌面安装包（GitHub Release）
 
-已配置 `electron-vite` + `electron-builder` + GitHub Actions：
+仓库已配置 `.github/workflows/release.yml`。
 
-- 工作流：`.github/workflows/release.yml`
-- 触发：推送版本标签（如 `v1.0.0`，需与 `package.json` 中 `version` 一致），或手动 `workflow_dispatch`
-- 流程：`npm run build` 生成 `dist` → `electron-builder` 打包并上传 Release 资产
-- 目标：`macOS`（dmg、zip）、`Windows`（nsis、portable）、`Linux`（AppImage、tar.gz）
+发布步骤：
 
-本地打包示例：
+1. 修改 [package.json](package.json) 中的 `version`，例如改为 `1.2.1`。
+2. 提交并推送该版本变更。
+3. 创建与版本一致的 Git 标签，格式必须为 `vX.Y.Z`，例如：
 
 ```bash
-npm run dist
-npm run dist:mac
-npm run dist:win
-npm run dist:linux
+git tag -a v1.2.1 -m "release: v1.2.1"
+git push origin main
+git push origin v1.2.1
 ```
 
-发版前建议本地执行 `npm run build` 确认通过。
+推送标签后，GitHub Actions 会自动构建并发布以下安装包到 GitHub Releases：
+
+- macOS: `dmg`, `zip`
+- Windows: `nsis`, `portable`
+- Linux: `AppImage`, `tar.gz`
+
+发版前建议先执行：
+
+```bash
+npm run build
+```
+
+说明：`npm run dist` / `dist:mac` / `dist:win` / `dist:linux` 仅用于本地打包测试，不会上传 GitHub Release。
 
 ## 许可证
 

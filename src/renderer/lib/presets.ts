@@ -51,6 +51,10 @@ function mergeUniqueStrings(a: string[], b: string[]): string[] {
   return Array.from(new Set([...a.map((s) => String(s || '').trim()).filter(Boolean), ...b]))
 }
 
+function resolvePresetUrl(filename: string): string {
+  return new URL(`./presets/${filename}`, window.location.href).toString()
+}
+
 export async function loadPresets(): Promise<{
   providers: ProviderPreset[]
   models: ModelPreset[]
@@ -58,8 +62,8 @@ export async function loadPresets(): Promise<{
   endpoints: string[]
 }> {
   const [providerResp, modelResp] = await Promise.all([
-    fetch('/presets/provider-presets.json'),
-    fetch('/presets/model-presets.json')
+    fetch(resolvePresetUrl('provider-presets.json')),
+    fetch(resolvePresetUrl('model-presets.json'))
   ])
   const raw = providerResp.ok ? await providerResp.json() : null
   let providers: ProviderPreset[] = []

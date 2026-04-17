@@ -4,7 +4,7 @@ import os from 'node:os'
 import fsPromises from 'node:fs/promises'
 import crypto from 'node:crypto'
 import { execFile } from 'node:child_process'
-import { IPC_CHANNELS, type FetchHttpRequest, type FetchHttpResponse, type ElectronAPI, type SaveResult } from '../shared/ipc'
+import { IPC_CHANNELS, type FetchHttpRequest, type FetchHttpResponse, type ElectronAPI, type SaveResult, type FetchHttpExchange } from '../shared/ipc'
 import type { ProviderConfig } from '../shared/types'
 
 function headersObjectFromFetchHeaders(fetchHeaders: Headers): Record<string, string> {
@@ -15,6 +15,21 @@ function headersObjectFromFetchHeaders(fetchHeaders: Headers): Record<string, st
     })
   } catch (_) {}
   return out
+}
+
+function redactHeaders(rawHeaders: Record<string, string>): Record<string, string> {
+  const out: Record<string, string> = {}
+  for (const [key, value] of Object.entries(rawHeaders || {})) {
+    const lowerKey = key.toLowerCase()
+    out[key] = lowerKey.includes('authorization') || lowerKey.includes('api-key') ? '[REDACTED]' : value
+  }
+  return out
+}
+
+function truncateForLog(value: string | null, limit = 4000): string {
+  const text = String(value ?? '')
+  if (text.length <= limit) return text
+  return `${text.slice(0, limit)}\n...[truncated ${text.length - limit} chars]`
 }
 
 async function requestByHttp(request: FetchHttpRequest): Promise<FetchHttpResponse> {
@@ -30,9 +45,17 @@ async function requestByHttp(request: FetchHttpRequest): Promise<FetchHttpRespon
   const bodyString = rawBody != null && method !== 'GET' && method !== 'HEAD'
     ? (typeof rawBody === 'string' ? rawBody : String(rawBody))
     : null
+  const exchange: FetchHttpExchange = {
+    request: {
+      url,
+      method,
+      headers: redactHeaders(headers),
+      body: bodyString == null ? null : truncateForLog(bodyString)
+    }
+  }
 
   try {
-    if (!url) return { ok: false, error: 'URL 为空' }
+    if (!url) return { ok: false, error: 'URL 为空', exchange }
     const controller = new AbortController()
     timer = setTimeout(() => controller.abort(), timeoutMs)
     const requestInit: RequestInit = { method, headers, signal: controller.signal }
@@ -40,16 +63,24 @@ async function requestByHttp(request: FetchHttpRequest): Promise<FetchHttpRespon
     const response = await fetch(url, requestInit)
     clearTimeout(timer)
     const body = await response.text()
+    exchange.response = {
+      status: response.status,
+      statusText: response.statusText,
+      headers: headersObjectFromFetchHeaders(response.headers),
+      body: truncateForLog(body)
+    }
     return {
       ok: true,
       status: response.status,
       statusText: response.statusText,
       headers: headersObjectFromFetchHeaders(response.headers),
-      body
+      body,
+      exchange
     }
   } catch (error) {
     if (timer) clearTimeout(timer)
-    return { ok: false, error: error instanceof Error ? error.message : String(error) }
+    exchange.error = error instanceof Error ? error.message : String(error)
+    return { ok: false, error: exchange.error, exchange }
   }
 }
 
